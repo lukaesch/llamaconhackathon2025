@@ -1,3 +1,4 @@
 llama-graph-rag/target/
 .env
 hackathon.db
+myenv/
