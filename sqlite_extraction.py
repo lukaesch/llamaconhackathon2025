@@ -10,8 +10,8 @@ class EpisodeExtractor:
     def __init__(self, db_path: str = "hackathon.db"):
         """Initialize the episode extractor with the database path."""
         self.db_path = db_path
-        self.conn = None
-        self.cursor = None
+        self.conn = Any 
+        self.cursor = sqlite3.Cursor 
 
     def connect(self) -> None:
         """Connect to the SQLite database."""

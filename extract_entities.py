@@ -6,6 +6,8 @@ import requests
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
+from sqlite_extraction import EpisodeExtractor
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -15,26 +17,6 @@ LLAMA_API_URL = os.getenv("LLAMA_API_URL", "https://api.llama.com/v1/chat/comple
 NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USER = os.getenv("NEO4J_USER")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
-
-# Sample transcript data for testing
-SAMPLE_TRANSCRIPT = """PODCAST METADATA  
-- podcast_id:      101  
-- podcast_title:   "AI Revolution"  
-- episode_id:      456  
-- episode_title:   "Tesla, OpenAI & the Future of AGI"  
-- release_date:    2024-11-15
-
-TRANSCRIPT SEGMENTS  
-00:00:10 | Host (John Smith): Welcome back to *AI Revolution*. Today we're joined by **Dr. Jane Doe**, an expert in AI ethics.  
-00:02:45 | Dr. Jane Doe: Last week **Sam Altman** at **OpenAI** hinted that GPT-5 will focus on safety first.  
-00:05:20 | Host: Meanwhile **Elon Musk** claims **Tesla**'s self-driving stack is "years ahead"—but critics say that's marketing hype.  
-00:07:55 | Dr. Jane Doe: Musk's bold timeline creates pressure, yet **Waymo** still leads in real-world miles.  
-00:10:30 | Host: Investors loved Tesla's update; the stock jumped 6 %.  
-00:12:05 | Dr. Jane Doe: True, but remember the fatal crash in 2018 involving Autopilot; families are still awaiting full accountability.  
-00:14:40 | Host: Switching gears, **DeepMind**'s *AlphaFold 3* might accelerate drug discovery—huge positive impact.  
-00:17:15 | Dr. Jane Doe: Yes, and cooperation between **DeepMind** and **Pfizer** could shorten clinical trials by years.  
-00:19:00 | Host: Listeners, send your questions to questions@airev.com—let's dive into Q&A after the break."""
-
 
 def create_prompt(transcript):
     """Create the full prompt for the Llama API"""
@@ -264,6 +246,7 @@ def extract_metadata(transcript):
 
     return metadata
 
+episode_list = [1,2,3,4,5,6,7]
 
 def main():
     # Check if environment variables are set
@@ -273,47 +256,49 @@ def main():
         )
         sys.exit(1)
 
-    # Use provided transcript or sample data
-    transcript = sys.argv[1] if len(sys.argv) > 1 else SAMPLE_TRANSCRIPT
+    for episode_id in episode_list:
+        print(f"Processing episode {episode_id}...")
 
-    # Extract metadata from transcript
-    metadata = extract_metadata(transcript)
-    podcast_id = metadata.get("podcast_id", "101")  # Default to sample ID if not found
-    episode_id = metadata.get("episode_id", "456")  # Default to sample ID if not found
+        extractor = EpisodeExtractor("hackathon.db")
+        episode_data = extractor.extract_episode_data(episode_id)
 
-    # Create prompt with transcript
-    prompt = create_prompt(transcript)
+        # Extract metadata from transcript
+        podcast_id = episode_data.get("podcast").get("id")  # Default to sample ID if not found
+        episode_id = episode_data.get("item").get("id")  # Default to sample ID if not found
 
-    # Call Llama API
-    print("Calling Llama API...")
-    response = call_llama_api(prompt)
+        # Create prompt with transcript
+        prompt = create_prompt(episode_data)
 
-    if response:
-        # Extract JSON data from response
-        data = extract_json_from_response(response)
+        # Call Llama API
+        print("Calling Llama API...")
+        response = call_llama_api(prompt)
 
-        if data:
-            # Add metadata to the data
-            data.update(metadata)
-
-            # Print extracted data
-            print("\nExtracted data:")
-            print(json.dumps(data, indent=2))
-
-            # Insert data into Neo4j
-            print("\nInserting data into Neo4j...")
-            db = Neo4jDatabase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
-            try:
-                db.insert_data(data, podcast_id, episode_id)
-                print("Data successfully inserted into Neo4j!")
-            except Exception as e:
-                print(f"Error inserting data into Neo4j: {e}")
-            finally:
-                db.close()
+        if response:
+            # Extract JSON data from response
+            data = extract_json_from_response(response)
+    
+            if data:
+                # Add metadata to the data
+                data.update(episode_data)
+    
+                # Print extracted data
+                print("\nExtracted data:")
+                print(json.dumps(data, indent=2))
+    
+                # Insert data into Neo4j
+                print("\nInserting data into Neo4j...")
+                db = Neo4jDatabase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
+                try:
+                    db.insert_data(data, podcast_id, episode_id)
+                    print("Data successfully inserted into Neo4j!")
+                except Exception as e:
+                    print(f"Error inserting data into Neo4j: {e}")
+                finally:
+                    db.close()
+            else:
+                print("Failed to extract JSON data from API response")
         else:
-            print("Failed to extract JSON data from API response")
-    else:
-        print("Failed to get response from Llama API")
+            print("Failed to get response from Llama API")
 
 
 if __name__ == "__main__":
