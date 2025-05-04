@@ -1,0 +1,1333 @@
+{
+  "item": {
+    "id": 1,
+    "podcast_id": 1,
+    "title": "Arthritis and Rheumatology",
+    "slug": "arthritis-and-rheumatology",
+    "description": "<p>Stan, Clarence, and Barry chat with Dr. Paul Waytz on arthritis and rheumatology.</p><p>Dr. Waytz - an experienced Rheumatologist - began his career as a physician in med school at the University of Illinois with an Internal Medicine Residency and Rheumatology Fellowship at the University of Minnesota. After two years in academic medicine, Dr. Waytz transitioned to private practice for the next 34 years. While Dr. Waytz retired from seeing patients in 2014, he continued with the clinic as a principal investigator for drug studies and clinical research focusing on implicit bias and DEI relations.</p><p>Listen along as Dr. Waytz shares his wisdom on rheumatology and arthritis.</p><p>Join the conversation at <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"http://healthchatterpodcast.com\">healthchatterpodcast.com</a></p><p>Brought to you in support of Hue-MAN, who is Creating Healthy Communities through Innovative Partnerships.</p><p>More about their work can be found at <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"http://huemanpartnership.org/\">http://huemanpartnership.org/</a></p><p></p>",
+    "pub_date_timestamp": 1718371503,
+    "item_pub_date": "Fri, 14 Jun 2024 13:25:03 GMT"
+  },
+  "podcast": {
+    "id": 1,
+    "title": "Health Chatter",
+    "slug": "health-chatter",
+    "image_url": "https://media.rss.com/healthchatter/20240213_060213_48a814ca5e2be6248dee6358c39ac62f.png",
+    "url": "https://media.rss.com/healthchatter/feed.xml",
+    "language": null
+  },
+  "persons": [
+    {
+      "id": 1,
+      "name": "Stan",
+      "slug": "stan",
+      "description": null
+    },
+    {
+      "id": 2,
+      "name": "Dr. Paul Waytz",
+      "slug": "dr-paul-waytz",
+      "description": null
+    },
+    {
+      "id": 3,
+      "name": "Clarence",
+      "slug": "clarence",
+      "description": null
+    },
+    {
+      "id": 4,
+      "name": "Barry Baines",
+      "slug": "barry-baines",
+      "description": null
+    },
+    {
+      "id": 5,
+      "name": "Arianda Tordoff",
+      "slug": "arianda-tordoff",
+      "description": null
+    }
+  ],
+  "transcriptions": [
+    {
+      "id": 4384,
+      "episode_id": 1,
+      "from_ts": "16.926",
+      "to_ts": "39.237",
+      "text": " Hello, everybody. Welcome to Health Chatter. Today's show is on arthritis and rheumatology, and I've got some personal experience with this, so this is going to be an interesting show with our guest, Paul Waits. I'll introduce him in just a second. We've got a great crew, as always, that  That helps Clarence and I make these shows successful for you, the listening audience.",
+      "person_id": 1
+    },
+    {
+      "id": 4385,
+      "episode_id": 1,
+      "from_ts": "39.317",
+      "to_ts": "65.109",
+      "text": "Research is done by Maddie Levine-Wolf, who's also doing the recording of our show today. So thank you, Maddie. Aaron Collins, Deandra Howard, Sheridan Nygaard, all our background researchers. Sheridan also does our marketing for us.  Matthew Campbell is our production guru. Without him, it would not come out to you, the listening audience, in perfect form with even a little music attached.",
+      "person_id": 1
+    },
+    {
+      "id": 4386,
+      "episode_id": 1,
+      "from_ts": "65.249",
+      "to_ts": "87.734",
+      "text": "So all these people are great. Then, of course, there's Clarence. Clarence and I are great colleagues, partners, and have a lot of fun doing these shows and like to chat.  And that's what this show is all about, health chatter. In addition, we have with us today, Barry Baines, who's our medical advisor and also a guest, Arianda Tordoff, who will be listening in.",
+      "person_id": 1
+    },
+    {
+      "id": 4387,
+      "episode_id": 1,
+      "from_ts": "88.014",
+      "to_ts": "116.496",
+      "text": "And if she has questions, she can chime in as well. So thanks to everybody. Thanks also to Human Partnership, who's our sponsor for these shows, community health organization that does wonderful, wonderful things out in the community, including,  Health Chatter, which is really cool. So you can see them at Human. You can visit their website at humanpartnership.org. You can also see us.",
+      "person_id": 1
+    },
+    {
+      "id": 4388,
+      "episode_id": 1,
+      "from_ts": "117.617",
+      "to_ts": "143.547",
+      "text": "Our Health Chatter website is healthchatterpodcast.com. If you really love us, you can even give us a review and tell us how great our shows are. Actually, you could even do it the other way if you think it's not so great, but we'd rather have it the former way.  So thanks to everybody for being with us.  Thanks to our background crew. Today we have Dr. Paul Waits with us.",
+      "person_id": 1
+    },
+    {
+      "id": 4389,
+      "episode_id": 1,
+      "from_ts": "143.608",
+      "to_ts": "169.166",
+      "text": "Paul, I've actually known, he lives in the hood, in the neighborhood here, and we run into each other every once in a while. Ironically, we did. I think if I remember right, Paul, you were walking back from the library with a backpack or a bag full of books. Exactly. And we sat and chatted. I said, God, Paul, you'd be great to be on our show. So he said, absolutely, let's do it.",
+      "person_id": 1
+    },
+    {
+      "id": 4390,
+      "episode_id": 1,
+      "from_ts": "169.693",
+      "to_ts": "198.902",
+      "text": " He did his undergrad at Washington U and St. Louis internal medicine residency and rheumatology fellowship at the university of Minnesota did a lot of work in, in rheumatology and arthritis, and also did quite a bit of, um, research in, in that area. So not only, um, a great clinician, but a, a researcher as well. He retired. He joined our crew a few years back, but, um,",
+      "person_id": 1
+    },
+    {
+      "id": 4391,
+      "episode_id": 1,
+      "from_ts": "199.774",
+      "to_ts": "222.193",
+      "text": " He still does a lot of great volunteer work out in the community because he thinks it's important, including gardening and also mentoring students. He's got a great family. I know some of his family that lives close by, which is kind of nice when you have grandkids. So welcome to the show. It's really nice to have you. Thanks for having me.",
+      "person_id": 1
+    },
+    {
+      "id": 4392,
+      "episode_id": 1,
+      "from_ts": "222.233",
+      "to_ts": "223.874",
+      "text": "Thanks for having me. It's a pleasure to be here.",
+      "person_id": 2
+    },
+    {
+      "id": 4393,
+      "episode_id": 1,
+      "from_ts": "224.135",
+      "to_ts": "253.18",
+      "text": "It's really great.  So arthritis. You know, I read through this background research, and to a certain extent, I could put all of it aside and just say it hurts. Because, you know, I have some of it myself, which I can talk about a little bit later. But all right. So let's start this thing off maybe with some definitions. You know, rheumatoid diseases, arthritic.",
+      "person_id": 1
+    },
+    {
+      "id": 4394,
+      "episode_id": 1,
+      "from_ts": "253.98",
+      "to_ts": "264.685",
+      "text": " diseases, distinctions between the two. What is it that we really need to know for the listening audience as we proceed with this show?",
+      "person_id": 1
+    },
+    {
+      "id": 4395,
+      "episode_id": 1,
+      "from_ts": "265.266",
+      "to_ts": "282.434",
+      "text": "Exactly, exactly. Well, first of all, the term itis means inflammation. So you could have pharyngitis, inflammation of the throat, and all sorts of tendonitis, inflammation of a tendon. So arthritis technically means inflammation of a joint, which is a very generic term.",
+      "person_id": 2
+    },
+    {
+      "id": 4396,
+      "episode_id": 1,
+      "from_ts": "283.675",
+      "to_ts": "313.524",
+      "text": " For rheumatologists and physicians in general and healthcare practitioners, the term rheumatic disease is more encompassing because there are over 100 different kinds of arthritis or 100 different kinds of diseases.  rheumatic disease, including some that have nothing to do with the joints. They may be inflammation of blood vessels or muscles or involve other things going on with the body.",
+      "person_id": 2
+    },
+    {
+      "id": 4397,
+      "episode_id": 1,
+      "from_ts": "315.626",
+      "to_ts": "335.594",
+      "text": " Like I said, arthritis is a very generic term. There's many, many rheumatic diseases, some of which are obscure. We're probably recognizing new rheumatic diseases every few years. So like I say, at a cocktail party, we'll say arthritis between the several of us, we'll say rheumatic disease.",
+      "person_id": 2
+    },
+    {
+      "id": 4398,
+      "episode_id": 1,
+      "from_ts": "336.194",
+      "to_ts": "365.44",
+      "text": "So let me ask you something. It's like, okay, why is arthritis more or less linked  with rheumatology, okay? If there's all these itises that are under the guise of rheumatology, why is it linked with, you know, cardiitis or, you know, you know what I mean? It's like all the other things as well. But why specifically arthritis does it seem to be linked with?",
+      "person_id": 1
+    },
+    {
+      "id": 4399,
+      "episode_id": 1,
+      "from_ts": "365.922",
+      "to_ts": "395.58",
+      "text": " Yeah, it's a great question. So a number of itises, like pharyngitis or carditis, could be caused by an infection like strep. A strep throat is truly an inflammation of the throat. Some viruses can cause inflammation of the heart and this type of thing.  However, inflammation is a complicated process and there's many kinds of inflammation. So the root of most rheumatic diseases is inflammation.",
+      "person_id": 2
+    },
+    {
+      "id": 4400,
+      "episode_id": 1,
+      "from_ts": "395.88",
+      "to_ts": "415.054",
+      "text": "And I want to come back to something related to that in a minute. And the itis or the inflammation is often caused by a disturbance of our immune system. So our immune system protects us from foreign agents, external agents, and really does an amazing job  in terms of taking care of us.",
+      "person_id": 2
+    },
+    {
+      "id": 4401,
+      "episode_id": 1,
+      "from_ts": "415.094",
+      "to_ts": "431.085",
+      "text": "But sometimes that immune system goes haywire, it goes awry and we start producing inflammatory problems as a basic term against our own organs and tissues.",
+      "person_id": 2
+    },
+    {
+      "id": 4402,
+      "episode_id": 1,
+      "from_ts": "432.017",
+      "to_ts": "461.907",
+      "text": " Um, and my aside here is that the most common type of arthritis is osteoarthritis or wear and tear arthritis, um, which is more of a degenerative process, um, where something is, it goes wrong with the cartilage of our joints, the spacer between the two bony surfaces and, um,  There's wear and tear. You lose the normal joint function and joint protection and inflammation can occur.",
+      "person_id": 2
+    },
+    {
+      "id": 4403,
+      "episode_id": 1,
+      "from_ts": "462.027",
+      "to_ts": "487.161",
+      "text": "So we have osteoarthritis, but it's often a secondary process to bone rubbing on bone or a fragment floating around a joint or something like that. So the most common kind of arthritis is kind of and it's becoming clear now that there's probably some immune issues related to it.  is more wear and tear and related to other factors like overuse or being overweight and this type of thing.",
+      "person_id": 2
+    },
+    {
+      "id": 4404,
+      "episode_id": 1,
+      "from_ts": "487.721",
+      "to_ts": "493.202",
+      "text": "But the most damaging kinds of arthritis, like rheumatoid, is a problem with autoimmunity.",
+      "person_id": 2
+    },
+    {
+      "id": 4405,
+      "episode_id": 1,
+      "from_ts": "494.643",
+      "to_ts": "519.582",
+      "text": "So how is it that rheumatologists link with, for instance, orthopedic medicine? Because orthopedic,  deals a lot with inflammation of, okay, so is there a strong linkage between the two professions?",
+      "person_id": 1
+    },
+    {
+      "id": 4406,
+      "episode_id": 1,
+      "from_ts": "520.103",
+      "to_ts": "551.083",
+      "text": "Yeah, so they truly don't deal so much with the inflammation  per se, but the result of the inflammation. Inflammation that has damaged the joint. So once that joint becomes, it's not functioning as well, there's bone on bone or bone near bone, and you get the pain from that because you lose the cartilage spacer. So they're dealing with more of a mechanical issue.",
+      "person_id": 2
+    },
+    {
+      "id": 4407,
+      "episode_id": 1,
+      "from_ts": "551.872",
+      "to_ts": "576.233",
+      "text": " where a mechanical problem, that's a result of the inflammatory process. And, you know, we try, you know, rheumatologists say we like to keep people away from orthopedists as much as possible because that means, oh, well, it's end stage in that joint or something is going on. We need their help to kind of manage the pain by hand.  doing a procedure or something like that.",
+      "person_id": 2
+    },
+    {
+      "id": 4408,
+      "episode_id": 1,
+      "from_ts": "576.373",
+      "to_ts": "576.654",
+      "text": "Yeah.",
+      "person_id": 1
+    },
+    {
+      "id": 4409,
+      "episode_id": 1,
+      "from_ts": "576.694",
+      "to_ts": "576.914",
+      "text": "Yeah.",
+      "person_id": 2
+    },
+    {
+      "id": 4410,
+      "episode_id": 1,
+      "from_ts": "577.094",
+      "to_ts": "579.336",
+      "text": "So like you're more on the proactive end.",
+      "person_id": 1
+    },
+    {
+      "id": 4411,
+      "episode_id": 1,
+      "from_ts": "579.676",
+      "to_ts": "592.685",
+      "text": "We're trying to, that's, that's the, that's the goal. Although it's amazing. You know, people these days go to, they say, I have pain. I'm going to go see an orthopedist. And when in fact they have something that they should be seeing a rheumatologist first.",
+      "person_id": 2
+    },
+    {
+      "id": 4412,
+      "episode_id": 1,
+      "from_ts": "593.246",
+      "to_ts": "593.566",
+      "text": "Yeah.",
+      "person_id": 1
+    },
+    {
+      "id": 4413,
+      "episode_id": 1,
+      "from_ts": "593.726",
+      "to_ts": "595.807",
+      "text": "Yeah. Yeah. Yeah. Yes.",
+      "person_id": 2
+    },
+    {
+      "id": 4414,
+      "episode_id": 1,
+      "from_ts": "596.488",
+      "to_ts": "607.565",
+      "text": "I'd like to ask this question. Food. Does food affect arthritis and rheumatology? I mean,  I'm inquisitive. I want to know. Okay.",
+      "person_id": 3
+    },
+    {
+      "id": 4415,
+      "episode_id": 1,
+      "from_ts": "607.765",
+      "to_ts": "626.357",
+      "text": "Well, certainly too much food. I got that one. I saw that one. But basically, it's a great subject. And a lot of people will say, there's no evidence that food affects different kinds of arthritis. And I think that's erroneous because  everybody's different.",
+      "person_id": 2
+    },
+    {
+      "id": 4416,
+      "episode_id": 1,
+      "from_ts": "627.077",
+      "to_ts": "655.151",
+      "text": "And if you have some inflammation, I don't think a food problem causes arthritis, but I think food, some people have sensitivities such that if they eat a certain thing, then that might flare their arthritis. And over the years, and there are numerous diets that people propose for, you know, helping arthritis and, and, you know, some of them,  have no basis in science.",
+      "person_id": 2
+    },
+    {
+      "id": 4417,
+      "episode_id": 1,
+      "from_ts": "656.152",
+      "to_ts": "676.808",
+      "text": "But if a person thinks that they're eliminating a certain food helps, I would be the last person to say, don't do that. I think there's certainly a placebo effect. And when I say placebo effect, I don't mean to  diminish that. But I think that's a very important issue. But it's a very individual thing, Clarence.",
+      "person_id": 2
+    },
+    {
+      "id": 4418,
+      "episode_id": 1,
+      "from_ts": "677.008",
+      "to_ts": "690.13",
+      "text": "And, you know, for some people, if they eat, say, tomatoes, their arthritis flares, and most people, it's not going to be a problem. So again, just like the immune system, it's very individual. Okay, thank you.",
+      "person_id": 2
+    },
+    {
+      "id": 4419,
+      "episode_id": 1,
+      "from_ts": "691.071",
+      "to_ts": "723.614",
+      "text": "So I, you bring up a really interesting point, as soon as something hurts,  especially joint related, people don't necessarily, well, for sure, they think of going to really orthopedics first. What's going on? Is there a lack of good communication about what rheumatologists do? What's the deal here?",
+      "person_id": 1
+    },
+    {
+      "id": 4420,
+      "episode_id": 1,
+      "from_ts": "724.329",
+      "to_ts": "744.869",
+      "text": " Yeah. You know, rheumatologists aren't as sexy as orthopedists. And it's that old surgical adage, a chance to cut is a chance to cure. So they say, well, I got my knee problem. You know, they'll scope me or they'll do a procedure and I'll be fine.",
+      "person_id": 2
+    },
+    {
+      "id": 4421,
+      "episode_id": 1,
+      "from_ts": "745.596",
+      "to_ts": "766.485",
+      "text": " Um, whereas your rheumatologist is, you know, when you say you're a rheumatologist at a party, it's usually a, you know, a showstopper there, you know, people go, okay, fine. Right. Um, but I, I think. Mercifully, I think people are getting more knowledgeable these days and they have friends who have rheumatic problems and they'll say, you know, my knee hurts.",
+      "person_id": 2
+    },
+    {
+      "id": 4422,
+      "episode_id": 1,
+      "from_ts": "767.106",
+      "to_ts": "790.143",
+      "text": "And maybe that friend or somebody with some knowledge, including their primary care doctor will say, do any other joints hurt?  And that's the next step. Orthopedists, and I love orthopedists, I have some good friends, you know, you go in with your knee, they're focusing on the knee. And a good orthopedist will say, do you have any other joint problems?",
+      "person_id": 2
+    },
+    {
+      "id": 4423,
+      "episode_id": 1,
+      "from_ts": "792.029",
+      "to_ts": "809.958",
+      "text": " And once they say, yeah, my wrist and my ankle, they said, well, maybe you ought to see a rheumatologist because it might be more than one joint. It's multiple joints that are giving you the problem. But rheumatology is the relatively new field where people were doing orthopedic procedures a century or more ago.",
+      "person_id": 2
+    },
+    {
+      "id": 4424,
+      "episode_id": 1,
+      "from_ts": "810.998",
+      "to_ts": "822.481",
+      "text": "So again, it seems like it's very, very complementary with orthopedic for sure.  All right, so let's talk about these.",
+      "person_id": 1
+    },
+    {
+      "id": 4425,
+      "episode_id": 1,
+      "from_ts": "822.961",
+      "to_ts": "851.09",
+      "text": "Yeah, you know, I'd like to, I'll just interrupt. It is, but again, with the development of new medications over the last, let's say, 50 years and increasing numbers of new medications,  our ability to change the course of people with various kinds of arthritis has improved significantly, especially rheumatoid arthritis, which for years was known as the great crippler.",
+      "person_id": 2
+    },
+    {
+      "id": 4426,
+      "episode_id": 1,
+      "from_ts": "851.61",
+      "to_ts": "879.297",
+      "text": "And it still can be that way, but we've got some amazing medications and amazing insights into how we treat and approach. And I will say this for our listeners, especially, there's a window. There's a window that of a couple of years,  that if you can start appropriate treatment within that window, you can do, you know, a light year's worth of work to prevent joint damage.",
+      "person_id": 2
+    },
+    {
+      "id": 4427,
+      "episode_id": 1,
+      "from_ts": "879.437",
+      "to_ts": "891.904",
+      "text": "Once the cartilage is damaged, you can't repair that. You know, it's gone. And it may lead to a process of progressive problems. But if you can get in there before at the very early stages, that changes lives.",
+      "person_id": 2
+    },
+    {
+      "id": 4428,
+      "episode_id": 1,
+      "from_ts": "892.224",
+      "to_ts": "893.625",
+      "text": "Yeah. Yeah. Good point.",
+      "person_id": 1
+    },
+    {
+      "id": 4429,
+      "episode_id": 1,
+      "from_ts": "893.705",
+      "to_ts": "894.245",
+      "text": "Good point.",
+      "person_id": 2
+    },
+    {
+      "id": 4430,
+      "episode_id": 1,
+      "from_ts": "894.545",
+      "to_ts": "924.766",
+      "text": "Barry, Dr. Barry.  Yeah. So, you know, trying to go down this path, I'm pretty sure we're going to go down a few paths here and talking about arthritis and and rheumatology and all those kind of things. Paul, as you were talking about this, it seems like the treatments that have been available have markedly changed over, you know, the past 20 to 30 years. I mean, really, you know, very remarkably.",
+      "person_id": 4
+    },
+    {
+      "id": 4431,
+      "episode_id": 1,
+      "from_ts": "925.979",
+      "to_ts": "948.847",
+      "text": " And with most arthritis conditions, usually pain and swelling, you know, seem to be very common symptoms. And so, you know, people go to, you know, to treat the pain so they can, you know, then do things. But at a higher level, can you just give us an overview of what you've seen in rheumatology in the treatment of these diseases over the past 20 years?",
+      "person_id": 4
+    },
+    {
+      "id": 4432,
+      "episode_id": 1,
+      "from_ts": "948.907",
+      "to_ts": "967.85",
+      "text": "It seems like every time I watch the commercials on, you know, every time I watch TV,  There are all these commercials about all these new immunologic agents that are very hard to pronounce, so they have to come up with catchy names from a brand perspective.",
+      "person_id": 4
+    },
+    {
+      "id": 4433,
+      "episode_id": 1,
+      "from_ts": "967.89",
+      "to_ts": "981.154",
+      "text": "I wonder if you could just talk about that from the perch of a rheumatologist and changes that you've seen and how that relates to us as consumers or just as people.",
+      "person_id": 4
+    },
+    {
+      "id": 4434,
+      "episode_id": 1,
+      "from_ts": "982.332",
+      "to_ts": "1009.561",
+      "text": " Sure. That's, again, a great question. Well, when I started out in private practice, say 1980, we, so up until, for a long time, people said, oh, all you can do is remove the inflammation or treat the inflammation that's there and you're treating the pain. And then some bright people said, well, we should try and do more. So they developed, so medications came to be that would reduce",
+      "person_id": 2
+    },
+    {
+      "id": 4435,
+      "episode_id": 1,
+      "from_ts": "1010.726",
+      "to_ts": "1037.628",
+      "text": " not just remove inflammation like you would get with ibuprofen and naproxen and drugs like that. So it does more than just remove the inflammation. It tries to prevent the inflammation getting to the joint.  Because that was an aha moment. And one of the first medications was elemental gold. You must remember using gold for rheumatoid arthritis.",
+      "person_id": 2
+    },
+    {
+      "id": 4436,
+      "episode_id": 1,
+      "from_ts": "1038.188",
+      "to_ts": "1064.723",
+      "text": "And the great story there is that people thought that TB caused rheumatoid arthritis. And they knew that gold treated the tubercle bacteria. So they said, so we'll give that. Well, in fact, it does treat the tubercle bacillus.  But it also reduces inflammation or prevents a certain amount of inflammation from getting there.",
+      "person_id": 2
+    },
+    {
+      "id": 4437,
+      "episode_id": 1,
+      "from_ts": "1065.423",
+      "to_ts": "1087.215",
+      "text": "People thought the same thing with hydroxychloroquine or Plaquenil, which is a drug that's used to treat malaria because people said, well, you know, TB is kind of like malaria.  And in fact, Plaquenil is still a great drug for rheumatoid arthritis. And then people realized that there were a lot of side effects with gold and a lot of people were escaping, even if they benefited from it.",
+      "person_id": 2
+    },
+    {
+      "id": 4438,
+      "episode_id": 1,
+      "from_ts": "1087.716",
+      "to_ts": "1114.129",
+      "text": "And people said, well, one way to really treat inflammation is to give them a cancer drug.  which is when the drug methotrexate began being used for rheumatoid arthritis, which, you know, once again, like many medicines, changed our lives because low doses of methotrexate, as opposed to cancer treating dosages, reduce inflammation. It works in a different way than treating cancers.",
+      "person_id": 2
+    },
+    {
+      "id": 4439,
+      "episode_id": 1,
+      "from_ts": "1115.729",
+      "to_ts": "1136.278",
+      "text": " And then all of a sudden, after a couple of decades of methotrexate, people were again escaping. And that's when the development of all the MAB drugs, infliximab and adalimumab and all these drugs that end in MAB, the monoclonal drugs that you see advertised. And they",
+      "person_id": 2
+    },
+    {
+      "id": 4440,
+      "episode_id": 1,
+      "from_ts": "1137.795",
+      "to_ts": "1166.717",
+      "text": " are once again changing how we look at things because they do a really, really good job of preventing inflammation from getting to the joint and other areas. So I don't know if that's kind of the long answer to the question, but we've evolved and we've continued to evolve so that when I retired 10 years ago, I think there were four biologics, which is the big group named",
+      "person_id": 2
+    },
+    {
+      "id": 4441,
+      "episode_id": 1,
+      "from_ts": "1167.628",
+      "to_ts": "1179.98",
+      "text": " And now there's probably 10 and more in the pipeline that work on different aspects of inflammation that produce the cells, the angry cells that chew up the joint.",
+      "person_id": 2
+    },
+    {
+      "id": 4442,
+      "episode_id": 1,
+      "from_ts": "1180.805",
+      "to_ts": "1202.584",
+      "text": " does that yeah yeah well paula since we're going back in time you mentioned century and we talked about 10 15 20 years ago and this is health chatter yes boy i used to remember about the king and him and him having gout gout yes and and now i'm finding some of my friends having gout what in the world is gout",
+      "person_id": 3
+    },
+    {
+      "id": 4443,
+      "episode_id": 1,
+      "from_ts": "1203.311",
+      "to_ts": "1230.336",
+      "text": " You know, I will send you a check in the mail for answering that question because gout is caused by an excess of uric acid.  And we all make uric acid. Some people make more uric acid than others. And some of that's genetic or familial. Some it's because they eat too much of the wrong food, especially fatty foods, which helps the buildup of uric acid.",
+      "person_id": 2
+    },
+    {
+      "id": 4444,
+      "episode_id": 1,
+      "from_ts": "1231.277",
+      "to_ts": "1265.027",
+      "text": "Alcohol can increase the production of uric acid and slow down the ability for kidneys to get rid of uric acid such that  uric acid will build up in a joint and uric acid becomes a needle-like crystal in the joint. And at some point, those needles, those crystals incite an inflammatory response. It's a different kind of inflammation than with rheumatoid arthritis, but it's very...",
+      "person_id": 2
+    },
+    {
+      "id": 4445,
+      "episode_id": 1,
+      "from_ts": "1266.705",
+      "to_ts": "1300.726",
+      "text": " It's a terrible situation where people have severe pain, redness, warmth, and swelling. Now you can treat that, or it will go away on its own after two weeks. But the uric acid stays there. And with time, the uric acid, if it left untreated,  will affect multiple joints and can cause as much damage as rheumatoid arthritis. And nodules, just like some people get with rheumatoid arthritis.",
+      "person_id": 2
+    },
+    {
+      "id": 4446,
+      "episode_id": 1,
+      "from_ts": "1300.746",
+      "to_ts": "1330.423",
+      "text": "So it basically starts with uric acid. And the reason I thank you for asking that is gout is a treatable condition. We have wonderful medications, low risk, low side effect profile,  that will lower the uric acid. And if you can get to people, again, before the damage, you can prevent problems with gout. Now, I'll tell you a story. You have to take those medications lifelong.",
+      "person_id": 2
+    },
+    {
+      "id": 4447,
+      "episode_id": 1,
+      "from_ts": "1331.364",
+      "to_ts": "1353.402",
+      "text": "There was a lineman for the Vikings who I saw as a patient who had gout.  And he had it in a couple of joints. We made the diagnosis. I put him on the medication. He took it. He felt great, you know, and this was a tough guy, really tough guy. He felt so great. Like many people do. He said, I don't need this medication.",
+      "person_id": 2
+    },
+    {
+      "id": 4448,
+      "episode_id": 1,
+      "from_ts": "1355.003",
+      "to_ts": "1383.688",
+      "text": "He stopped the medication and within a month had an attack that brought this guy to tears. I mean, this was a professional football player who's, you know,  been beat up and strung up and all this kind of stuff. He was in tears because he was in so much pain. So if there's gout and it's a treatable condition and in 2024 people, we shouldn't be seeing the amount of gout that we do.",
+      "person_id": 2
+    },
+    {
+      "id": 4449,
+      "episode_id": 1,
+      "from_ts": "1384.724",
+      "to_ts": "1393.966",
+      "text": " So my question, my next question to you is, how do you recognize it? How do you know, you say, if you catch it early enough, how do you, how do you, what are the symptoms that would help a person understand that?",
+      "person_id": 3
+    },
+    {
+      "id": 4450,
+      "episode_id": 1,
+      "from_ts": "1394.386",
+      "to_ts": "1423.707",
+      "text": "Yeah. So the typical symptoms is very abrupt onset, pain, severe pain, redness, warmth, and swelling, usually in the big toe. However, and so people say, oh, it's in the big toe. 30% of initial attacks of gout are more than one joint.  which throws some people off because they say, well, you've got three joints, it can't be gout. Or it's not the toe, it's the ankle and the knee.",
+      "person_id": 2
+    },
+    {
+      "id": 4451,
+      "episode_id": 1,
+      "from_ts": "1424.327",
+      "to_ts": "1445.805",
+      "text": "The way to prove that, and this sounds barbaric, is you put a needle in a joint and you take a little fluid out.  And you look at it under the microscope. And with very easy techniques, you can identify those crystals. And then you say, aha, I've made the diagnosis. I'm going to reduce the inflammation with one drug.",
+      "person_id": 2
+    },
+    {
+      "id": 4452,
+      "episode_id": 1,
+      "from_ts": "1446.306",
+      "to_ts": "1461.898",
+      "text": "And then I'm going to put you on another drug that doesn't fight inflammation, but lowers the uric acid in your system. The interesting thing, Clarence, is that say somebody comes in with an attack of gout.  in their knee and you prove the diagnosis.",
+      "person_id": 2
+    },
+    {
+      "id": 4453,
+      "episode_id": 1,
+      "from_ts": "1462.279",
+      "to_ts": "1475.593",
+      "text": "I can guarantee you, almost guarantee you, that if I put a needle in a wrist that's not even symptomatic, I would find some uric acid crystals because that process has been going on for years. Wow.",
+      "person_id": 2
+    },
+    {
+      "id": 4454,
+      "episode_id": 1,
+      "from_ts": "1476.054",
+      "to_ts": "1499.139",
+      "text": "So, Paul, let me ask you, why is it that  it has to be a lifelong medication. Okay, I know that there are certain medications that are, you know, like thyroid, you have to take thyroid medication. If you have a thyroid problem, boom. Why in this case, why isn't it that the medications don't rid the problem?",
+      "person_id": 1
+    },
+    {
+      "id": 4455,
+      "episode_id": 1,
+      "from_ts": "1499.94",
+      "to_ts": "1524.811",
+      "text": "Yeah, it's because we're making uric acid on a daily basis. Okay. And you can lower it, but once you stop the drug, the processes that created that  the elevation of the uric acid will just go right back to where they were. And again, we talk about diet and this and that and the other thing. A lot of it's genetic. The most part is genetic. So you're going to have it.",
+      "person_id": 2
+    },
+    {
+      "id": 4456,
+      "episode_id": 1,
+      "from_ts": "1525.151",
+      "to_ts": "1550.376",
+      "text": "And so here's another interesting story. The ancient Greek physicians recognized that gout would occur. And you can find gout  in mummies, you know, so it's been going on. And the treatment at the time was to go chew on willow bark. Willow bark has acetylsalicylic acid in it, which is the basis of aspirin.",
+      "person_id": 2
+    },
+    {
+      "id": 4457,
+      "episode_id": 1,
+      "from_ts": "1551.057",
+      "to_ts": "1566.389",
+      "text": "And if you take enough aspirin or if, I mean, usually low doses of aspirin can aggravate gout, but if you take a lot of it, that will reduce the inflammation. So we, that was recognized, you know,  many centuries ago.",
+      "person_id": 2
+    },
+    {
+      "id": 4458,
+      "episode_id": 1,
+      "from_ts": "1566.969",
+      "to_ts": "1583.736",
+      "text": "You know, it's interesting. I'm reading the book, the new book by Eric Larson, Demon of Unrest. And, you know, it takes place during, you know, Lincoln administration, Abraham Lincoln, and during the Civil War. And I can't tell you how many times in that book so far, I'm about 150 pages in it,",
+      "person_id": 1
+    },
+    {
+      "id": 4459,
+      "episode_id": 1,
+      "from_ts": "1585.225",
+      "to_ts": "1598.04",
+      "text": " where they talk about gout, where some of these legislators, congressmen, et cetera, they'd have meetings together and they'd be soaking their feet in ice. Right, right, yeah.",
+      "person_id": 1
+    },
+    {
+      "id": 4460,
+      "episode_id": 1,
+      "from_ts": "1598.998",
+      "to_ts": "1614.782",
+      "text": " And that was the 1860s. I think Napoleon had gout. I think some of the czars had gout. And there's talk about wars that were either won or lost because somebody had gout or, you know, and they couldn't show up.",
+      "person_id": 2
+    },
+    {
+      "id": 4461,
+      "episode_id": 1,
+      "from_ts": "1615.162",
+      "to_ts": "1615.923",
+      "text": "Yeah, right.",
+      "person_id": 1
+    },
+    {
+      "id": 4462,
+      "episode_id": 1,
+      "from_ts": "1616.103",
+      "to_ts": "1616.683",
+      "text": "Exactly.",
+      "person_id": 2
+    },
+    {
+      "id": 4463,
+      "episode_id": 1,
+      "from_ts": "1616.823",
+      "to_ts": "1621.664",
+      "text": "Yeah. It's an interesting historical disease for sure.",
+      "person_id": 1
+    },
+    {
+      "id": 4464,
+      "episode_id": 1,
+      "from_ts": "1622.064",
+      "to_ts": "1622.664",
+      "text": "Exactly.",
+      "person_id": 2
+    },
+    {
+      "id": 4465,
+      "episode_id": 1,
+      "from_ts": "1623.285",
+      "to_ts": "1624.045",
+      "text": "Clarence, go ahead.",
+      "person_id": 1
+    },
+    {
+      "id": 4466,
+      "episode_id": 1,
+      "from_ts": "1624.705",
+      "to_ts": "1644.462",
+      "text": " Paul, I have another question for you. Lupus. It's interesting to me, and I don't know, I'm going to make a statement. You know, it just seems to me like everyone that I know that has lupus is a female. So, you know, what is it?",
+      "person_id": 3
+    },
+    {
+      "id": 4467,
+      "episode_id": 1,
+      "from_ts": "1645.271",
+      "to_ts": "1678.073",
+      "text": " Okay. So lupus is an autoimmune disease that generally affects women 10 times more than men. So you're correct there. And like with rheumatoid arthritis that primarily involves the joints, you can get joint involvement with lupus, but generally speaking, you have other organ systems involved, such as the skin.  The lining of the lungs, the lining of the heart. So you have multiple symptoms.",
+      "person_id": 2
+    },
+    {
+      "id": 4468,
+      "episode_id": 1,
+      "from_ts": "1678.114",
+      "to_ts": "1698.552",
+      "text": "You have joint pain. You have chest pain. You have shortness of breath. The bad thing with lupus, the really bad thing, is I think the statistics are, let's just say, a good proportion, over 50%, will have kidney problems. That the inflammation attacks the kidney, which causes kidney failure.",
+      "person_id": 2
+    },
+    {
+      "id": 4469,
+      "episode_id": 1,
+      "from_ts": "1699.389",
+      "to_ts": "1722.685",
+      "text": " And there are several different kinds of kidney failure such that you really need to recognize what's going on. So part of a lupus evaluation includes looking at a urine specimen and doing blood tests that look at kidney function. Lupus can affect the brain.  It can affect not only the lining of the heart, but the heart itself. It can affect other blood vessels.",
+      "person_id": 2
+    },
+    {
+      "id": 4470,
+      "episode_id": 1,
+      "from_ts": "1722.765",
+      "to_ts": "1743.922",
+      "text": "So it is potentially a life-threatening disease. Whereas rheumatoid arthritis tends to not be life-threatening, but chronic in pain, you can have life-threatening issues. And just like rheumatoid arthritis, it's a disease of young people, especially young women, women between the ages of 20 and 40. Wow. Wow. Wow.  So, all right.",
+      "person_id": 2
+    },
+    {
+      "id": 4471,
+      "episode_id": 1,
+      "from_ts": "1744.843",
+      "to_ts": "1776.05",
+      "text": "I'm going to go back to arthritis a little bit. Sure. Okay. Seems to me, you know, in many ways, sports, you know, and how we're involved with sports today has a tendency to lead to more arthritic types of problems. For instance, even in orthopedics, you know, they call it sports medicine now. I mean, it's like, you know. All right. So,  First of all, is that true?",
+      "person_id": 1
+    },
+    {
+      "id": 4472,
+      "episode_id": 1,
+      "from_ts": "1776.67",
+      "to_ts": "1797.771",
+      "text": "Second of all, because of that, are we seeing people becoming more arthritic sooner or not necessarily because it's really more connected to your genetics than anything else? So does overuse through sports or whatever lead to more arthritic conditions?",
+      "person_id": 1
+    },
+    {
+      "id": 4473,
+      "episode_id": 1,
+      "from_ts": "1798.091",
+      "to_ts": "1826.38",
+      "text": "Yeah, yeah.  The yes, overuse can certainly lead to more wear and tear arthritis. And again, it's about the idea of pounding that cartilage in the knee or hips or shoulders with people, whatever they're doing, torquing or lifting weights and this type of thing that you're putting an unusual amount of force into.  Cartilage is made to absorb a certain amount of force.",
+      "person_id": 2
+    },
+    {
+      "id": 4474,
+      "episode_id": 1,
+      "from_ts": "1826.42",
+      "to_ts": "1855.015",
+      "text": "If you overdo it for too long, then that's going to create some problem there. So that nice cushioning of the cart that the cartilage provides falters. And then it sets off, you know, a process that then includes inflammation that just aggravates the process. Now people said, well,  does running or does running cause or not cause arthritis of the knees?",
+      "person_id": 2
+    },
+    {
+      "id": 4475,
+      "episode_id": 1,
+      "from_ts": "1855.455",
+      "to_ts": "1884.144",
+      "text": "And there have been studies that looked at marathon runners over years. And early studies suggested that it doesn't, that running doesn't, you know, marathon running. Now, you have to factor in a couple of things. You have to really look at more than a few years after  as time goes on, so maybe 10, 15, 20 years. And that data still doesn't exist in clear fashion yet.",
+      "person_id": 2
+    },
+    {
+      "id": 4476,
+      "episode_id": 1,
+      "from_ts": "1884.633",
+      "to_ts": "1911.398",
+      "text": " The other thing is marathon runners tend to be very athletic, so they're not overweight and they're taking good care of themselves and they're eating properly, this type of thing. So it can be multifactorial. The other thing is that a prior injury someplace, so say you, I don't know, fell down some stairs when you were a kid and you had a bad knee, that is a precursor",
+      "person_id": 2
+    },
+    {
+      "id": 4477,
+      "episode_id": 1,
+      "from_ts": "1912.386",
+      "to_ts": "1940.418",
+      "text": " to running, aggravating the knee problem. So if there's something underlying going on, then you're gonna have issues. So overuse can certainly lead to wear and tear arthritis, but we're talking decades down the line, we're talking decades. Now, let me just, you know, I love stories. There were autopsy studies of Korean War casualties.",
+      "person_id": 2
+    },
+    {
+      "id": 4478,
+      "episode_id": 1,
+      "from_ts": "1942.502",
+      "to_ts": "1975.447",
+      "text": " And so young men in their 20s and 30s, and I think the original data suggests that 30% of Korean War casualties had wear and tear arthritis in their neck, already noted. So the process may start early. Now, you may not have symptoms for a long time.  But we know something may well be going on, which then goes back to say, well, maybe there is a genetic issue with wear and tear arthritis.",
+      "person_id": 2
+    },
+    {
+      "id": 4479,
+      "episode_id": 1,
+      "from_ts": "1975.867",
+      "to_ts": "1983.593",
+      "text": "Maybe there is a disturbance of the autoimmune system that leads to this as well. So it was a fascinating study.",
+      "person_id": 2
+    },
+    {
+      "id": 4480,
+      "episode_id": 1,
+      "from_ts": "1984.453",
+      "to_ts": "2005.245",
+      "text": "You know, one of the things that I noticed when I help knee replacement patients is this whole idea of compensations.  So it's like if your knee hurts on the right side, you have a tendency to compensate and how you walk or what have you. Then all of a sudden your hip hurts on your left side.",
+      "person_id": 1
+    },
+    {
+      "id": 4481,
+      "episode_id": 1,
+      "from_ts": "2005.265",
+      "to_ts": "2006.286",
+      "text": "Exactly.",
+      "person_id": 5
+    },
+    {
+      "id": 4482,
+      "episode_id": 1,
+      "from_ts": "2007.047",
+      "to_ts": "2025.22",
+      "text": "And so it's like this kind of back and forth and back and forth until you're able to treat one knee.  or the other, whether through, you know, prevention of some sort or intervention, surgical intervention in this case. So, all right.",
+      "person_id": 1
+    },
+    {
+      "id": 4483,
+      "episode_id": 1,
+      "from_ts": "2025.26",
+      "to_ts": "2029.861",
+      "text": "Before Barry, so, and then you have to rehab that other side too.",
+      "person_id": 2
+    },
+    {
+      "id": 4484,
+      "episode_id": 1,
+      "from_ts": "2030.221",
+      "to_ts": "2031.782",
+      "text": "Exactly, exactly.",
+      "person_id": 1
+    },
+    {
+      "id": 4485,
+      "episode_id": 1,
+      "from_ts": "2031.862",
+      "to_ts": "2035.823",
+      "text": "So it's like you can't win. Yeah, yeah. Go ahead.",
+      "person_id": 2
+    },
+    {
+      "id": 4486,
+      "episode_id": 1,
+      "from_ts": "2035.843",
+      "to_ts": "2054.796",
+      "text": "Sorry to interrupt you, Barry. Yeah, go ahead, Barry. Now, so I'm going to stick my neck out a little bit here.  because of what you were talking about with that other study. Um, one of the things over the past, you know, decades is that, uh, we spend more and more time sitting in front of the screen, the computer.",
+      "person_id": 4
+    },
+    {
+      "id": 4487,
+      "episode_id": 1,
+      "from_ts": "2054.816",
+      "to_ts": "2074.797",
+      "text": "Um, and so I'm just when I know that, you know, hand things as well from, you know, keyboarding and stuff like that. So I'm just wondering, you know, how, uh, what, what we do in our daily activities, how that has, uh,  brought up or impacted the prevalence of some of these things.",
+      "person_id": 4
+    },
+    {
+      "id": 4488,
+      "episode_id": 1,
+      "from_ts": "2075.077",
+      "to_ts": "2099.696",
+      "text": "And then my sort of a second part of the question that goes beyond that, but that is there are things that we can do that don't have to be medication. There are a lot of lifestyle things that really can make a big difference in its impact on arthritis, certainly osteoarthritis, and I would imagine as well.  rheumatoid arthritis.",
+      "person_id": 4
+    },
+    {
+      "id": 4489,
+      "episode_id": 1,
+      "from_ts": "2099.736",
+      "to_ts": "2112.509",
+      "text": "But I was just wondering if you could touch on how this has really changed what some of the arthritis conditions that we're seeing as an impact from our daily activities.",
+      "person_id": 4
+    },
+    {
+      "id": 4490,
+      "episode_id": 1,
+      "from_ts": "2113.15",
+      "to_ts": "2137.925",
+      "text": "Sure. Yeah. And starting right there with working on a computer is...  as I was winding up my career, we were seeing a lot more neck problems because of the position you need to get into to work on, um, uh,  a computer. So, you know, we talk about, you know, raising the screen so that it's at eye level, not that you're bending over it.",
+      "person_id": 2
+    },
+    {
+      "id": 4491,
+      "episode_id": 1,
+      "from_ts": "2138.566",
+      "to_ts": "2158.198",
+      "text": "We see a lot of overuse issues with the hands, not only carpal tunnel syndrome because of the hand use on keyboards and things like this, but tendonitis and, you know, potentially even some wear and tear in small joints.  and things like that because of overuse.",
+      "person_id": 2
+    },
+    {
+      "id": 4492,
+      "episode_id": 1,
+      "from_ts": "2158.278",
+      "to_ts": "2195.162",
+      "text": "So again, an overuse of small joints, you have the kind of the sedentary issue of, you know, sitting at a desk for six, seven, eight hours. So all of that contributes. So that's,  Part of the answer. So I think we're seeing a new phase of the last two decades of people with wear and tear problems.  and the shoulders as well. Yeah, lifestyle changes, weight loss is obvious.",
+      "person_id": 2
+    },
+    {
+      "id": 4493,
+      "episode_id": 1,
+      "from_ts": "2195.482",
+      "to_ts": "2217.96",
+      "text": "That's something that we always talk about and people think about, but I think the right amount of exercise that you put joints through your ranges of motion and things like that, that you strengthen, you mobilize. We think about certain physical activities such as swimming, which is not weight bearing.",
+      "person_id": 2
+    },
+    {
+      "id": 4494,
+      "episode_id": 1,
+      "from_ts": "2219.542",
+      "to_ts": "2247.504",
+      "text": " a non-weight-bearing exercise, so you don't have the pounding on the lower body and the lower back that you would get from walking, from running, and maybe even walking, depending on how much arthritis you have.  problem with swimming, it's a terrible exercise for osteoporosis, which is the loss of bone mass, which can lead to fractures, which is not a fun thing as we age.",
+      "person_id": 2
+    },
+    {
+      "id": 4495,
+      "episode_id": 1,
+      "from_ts": "2247.644",
+      "to_ts": "2263.031",
+      "text": "So, you know, I don't run anymore. I used to run and I walk and I always say that if I knew about cross training, you know, 50 years ago, I'd still be running because I would have added biking, I would have added swimming and this type of thing. So I think, you know, I think it's,",
+      "person_id": 2
+    },
+    {
+      "id": 4496,
+      "episode_id": 1,
+      "from_ts": "2263.792",
+      "to_ts": "2270.579",
+      "text": " I think our health in general depends on how we treat ourselves, what we put into our systems, and how we take care of ourselves.",
+      "person_id": 2
+    },
+    {
+      "id": 4497,
+      "episode_id": 1,
+      "from_ts": "2271.48",
+      "to_ts": "2302.212",
+      "text": "You know, I often say to people, especially as you age, you really have to listen carefully to your body. You really, really do. And if you have...  a high pain tolerance, like some people do, you have to learn how to put that pain tolerance aside and say, I'll get back to you in six weeks after I get rid of this pain that's hurting my back or what have you.",
+      "person_id": 1
+    },
+    {
+      "id": 4498,
+      "episode_id": 1,
+      "from_ts": "2302.832",
+      "to_ts": "2332.573",
+      "text": "So yeah, I'd be remiss if I didn't, I'm sure everybody recognizes this. You wake up in the morning and you say, oh my God, where in hell did that stiffness come from?  All right, so what's going on here? I mean, I certainly notice it more, you know, as I age. What's going on as, you know, when we wake up in the morning, we feel stiff all the time.",
+      "person_id": 1
+    },
+    {
+      "id": 4499,
+      "episode_id": 1,
+      "from_ts": "2332.953",
+      "to_ts": "2367.577",
+      "text": "Right, right. Well, in general, as we're, when we're younger, our joints and our soft tissue, when I say soft tissue, we're talking about ligaments, tendons, they're  Flexibility is maintained by their ability to stretch and move. And some of that or a lot of that relates to fluid. I mean, there's little bits of fluid in our tissues that if you did a biopsy, you might not see it, but it's there.",
+      "person_id": 2
+    },
+    {
+      "id": 4500,
+      "episode_id": 1,
+      "from_ts": "2367.617",
+      "to_ts": "2386.477",
+      "text": "We recognize that, that the chemicals that help us be flexible, the muscles, the tendons.  and, uh, uh, and the ligaments as we age, we kind of lose that fluidity and some people lose it at a different age. Um, some people lose it when they're in their forties and fifties, some people not to their sixties or seventies.",
+      "person_id": 2
+    },
+    {
+      "id": 4501,
+      "episode_id": 1,
+      "from_ts": "2386.837",
+      "to_ts": "2401.732",
+      "text": "So what happens is that you lose the flexibility or the ability of the muscle or the tendon and ligament to stretch as freely and as painlessly. And so, um, um,  So things are tighter.",
+      "person_id": 2
+    },
+    {
+      "id": 4502,
+      "episode_id": 1,
+      "from_ts": "2401.792",
+      "to_ts": "2431.73",
+      "text": "It's like if you had a very, a brand new rubber band that doesn't have the fluid, but as you stretch it more, you know, that it's the opposite issue there, but it's just, it's sadly a natural phenomenon that, that you. You get stiff. So as an aside, you know, Minnesota is home to so many Somali people, Somali people, the Somali language doesn't have a word for stiffness, right?  Interesting.",
+      "person_id": 2
+    },
+    {
+      "id": 4503,
+      "episode_id": 1,
+      "from_ts": "2432.41",
+      "to_ts": "2455.868",
+      "text": "And we would see a lot of Somali patients and I had an interest in taking care of them. And most kinds of arthritis, people feel stiff, especially rheumatoid arthritis and osteo. So they use a descriptive term like it's as if I have metal in my body, which is, you know, if you think about it, it's as if you have metal.",
+      "person_id": 2
+    },
+    {
+      "id": 4504,
+      "episode_id": 1,
+      "from_ts": "2458.43",
+      "to_ts": "2471.77",
+      "text": "Clarence, go ahead.  So we've talked a lot about the illnesses and things like that. But I think the research that we have also talked about the fact that there are deaths by arthritis. Could you talk a little bit about that?",
+      "person_id": 3
+    },
+    {
+      "id": 4505,
+      "episode_id": 1,
+      "from_ts": "2472.35",
+      "to_ts": "2495.07",
+      "text": "Yeah. And that's a multifactorial thing. With lupus, people die of kidney disease or they can die of brain disease. With...  There are other kinds of inflammation. And again, people who don't even have joint problems, they have inflammation of blood vessels such that the blood flow is reduced maybe to the brain or to the heart.",
+      "person_id": 2
+    },
+    {
+      "id": 4506,
+      "episode_id": 1,
+      "from_ts": "2496.21",
+      "to_ts": "2521.901",
+      "text": "And it's almost as if there's a clot there and they have strokes or they could die or they could have heart attacks. The other thing, and especially with rheumatoid arthritis is that people,  With these new medications, that's changed, Clarence, but people would be very sick. They would be bedridden. They couldn't exercise. They couldn't move well. They would get pneumonia easier.",
+      "person_id": 2
+    },
+    {
+      "id": 4507,
+      "episode_id": 1,
+      "from_ts": "2523.142",
+      "to_ts": "2552.952",
+      "text": "They would just be...  chronically ill to the point that they couldn't participate in daily activities. And those people were just sicker in general, and they had earlier heart attacks than the general population. They would get pneumonia, and that would cause death. So that's changed a lot with our newer medications. And  With rheumatoid arthritis in particular, there's two issues.",
+      "person_id": 2
+    },
+    {
+      "id": 4508,
+      "episode_id": 1,
+      "from_ts": "2553.232",
+      "to_ts": "2569.024",
+      "text": "People with rheumatoid arthritis, their cholesterol levels and their lipid levels will go up. So that adds to the cardiac issue. The other issue is that inflammation in our systems will raise lipid levels. And",
+      "person_id": 2
+    },
+    {
+      "id": 4509,
+      "episode_id": 1,
+      "from_ts": "2569.887",
+      "to_ts": "2594.905",
+      "text": " And so that's why if you go to a cardiologist, they may want to do a test called a CRP, which is a marker of inflammation, which might identify at risk people because so it's a secondary effect. Now, again, we're doing a better job, but it's still you got to you got to take care of all these things. And as rheumatologists, we learn to become almost like primary care docs for our patients.",
+      "person_id": 2
+    },
+    {
+      "id": 4510,
+      "episode_id": 1,
+      "from_ts": "2596.146",
+      "to_ts": "2642.551",
+      "text": "So, you know, our great research.  has put together some background statistics here. And these are telling, I think. So just correct me if I'm wrong, but these are arthritis, 36 million ambulatory care visits yearly. I mean, that's insane. 744,000 hospitalizations,  to Clarence's point, 9,300 deaths, 19 million people with activity limitations. I mean, this is, it's really rampant.",
+      "person_id": 1
+    },
+    {
+      "id": 4511,
+      "episode_id": 1,
+      "from_ts": "2643.591",
+      "to_ts": "2669.572",
+      "text": "Now, this is really interesting too. When you look at race,  and ethnicity, you mentioned the Somali population, but here's just an idea, and this is, I think, pretty telling. 39.1 non-Hispanic white adults reported doctor-diagnosed arthritis. Okay, so that's the white non-Hispanic.",
+      "person_id": 1
+    },
+    {
+      "id": 4512,
+      "episode_id": 1,
+      "from_ts": "2670.948",
+      "to_ts": "2704.278",
+      "text": " six million non-Hispanic Black adults, which is also very interesting because Clarence and I have talked about, we've gone through a lot of different shows and the Black population is at much higher risk for many, many diseases, but it doesn't seem to be as high in the arthritis mode. And it goes on and on. So it's like,  you know, we do see some race, ethnicity differences.",
+      "person_id": 1
+    },
+    {
+      "id": 4513,
+      "episode_id": 1,
+      "from_ts": "2704.639",
+      "to_ts": "2708.621",
+      "text": "Did you notice that or pick up on that in your practice at all, Paul?",
+      "person_id": 1
+    },
+    {
+      "id": 4514,
+      "episode_id": 1,
+      "from_ts": "2709.181",
+      "to_ts": "2726.85",
+      "text": "Yeah. And going back to Clarence's original question about women with lupus, black women with lupus have the highest incidence of mortality. So now,  So, you know, we live in Minnesota, which is a pretty white place.",
+      "person_id": 2
+    },
+    {
+      "id": 4515,
+      "episode_id": 1,
+      "from_ts": "2727.41",
+      "to_ts": "2728.391",
+      "text": "Yeah.",
+      "person_id": 5
+    },
+    {
+      "id": 4516,
+      "episode_id": 1,
+      "from_ts": "2728.892",
+      "to_ts": "2744.189",
+      "text": "And so we may be a little we're not maybe not recognizing it. Now, things are changing. Obviously, I trained in Chicago. I did med school in Chicago and a Cook County hospital where it was different. I think there's a number of components here.",
+      "person_id": 2
+    },
+    {
+      "id": 4517,
+      "episode_id": 1,
+      "from_ts": "2745.16",
+      "to_ts": "2772.915",
+      "text": " One of which goes back, and again, we're getting into a little DEI stuff, is that people of color and people of various underrepresented groups will do better when they see a physician who looks like themselves. And that's been known. So if I was a black man and I had a white doc,",
+      "person_id": 2
+    },
+    {
+      "id": 4518,
+      "episode_id": 1,
+      "from_ts": "2774.338",
+      "to_ts": "2785.876",
+      "text": " whether I'm perceived to be complaining or not complaining, there'd be a tendency to not maybe go to him for the aches and pains and to say, I'm just going to put up with my aches and pains. You know, I'm just using that as an example. Yeah.",
+      "person_id": 2
+    },
+    {
+      "id": 4519,
+      "episode_id": 1,
+      "from_ts": "2785.917",
+      "to_ts": "2787.739",
+      "text": "So the question is comfort.",
+      "person_id": 1
+    },
+    {
+      "id": 4520,
+      "episode_id": 1,
+      "from_ts": "2788.673",
+      "to_ts": "2793.616",
+      "text": " Yeah. And you can have better outcomes when you see a doc that looks like you.",
+      "person_id": 2
+    },
+    {
+      "id": 4521,
+      "episode_id": 1,
+      "from_ts": "2794.016",
+      "to_ts": "2794.316",
+      "text": "Yeah.",
+      "person_id": 1
+    },
+    {
+      "id": 4522,
+      "episode_id": 1,
+      "from_ts": "2794.877",
+      "to_ts": "2828.597",
+      "text": "That's been proven over and over again. So is it an incidence issue or is it just, um, is it just, um, you know, um, you know, I hate to say bias issue or, or, uh, that kind of thing. Um, so it's, it's very interesting. Um,  I just want to get back to those statistics. When you say all these people go to the doctor or whatever, there's a lot of people who are not going to the doctor, too. Correct.",
+      "person_id": 2
+    },
+    {
+      "id": 4523,
+      "episode_id": 1,
+      "from_ts": "2828.637",
+      "to_ts": "2856.244",
+      "text": "They haven't. These are just the ones that do. Yeah, so you do a study at one point in time, and that's going to change. The overall statistics for rheumatoid arthritis involves 1% to 2% of the population.  And you say, well, 1% to 2% isn't a lot. Hey, 1% to 2% is a lot. Of that 1% to 2%, about 5% are kids under the age of 16. So there's a condition called juvenile.",
+      "person_id": 2
+    },
+    {
+      "id": 4524,
+      "episode_id": 1,
+      "from_ts": "2856.264",
+      "to_ts": "2872.687",
+      "text": "We used to call it juvenile rheumatoid arthritis. Now it's called juvenile inflammatory arthritis.  Um, so I can't even remember what the original point was, Stan, but there's a lot of arthritis going on and, and people in underrepresented groups don't, don't necessarily do as well.",
+      "person_id": 2
+    },
+    {
+      "id": 4525,
+      "episode_id": 1,
+      "from_ts": "2872.727",
+      "to_ts": "2883.95",
+      "text": "And whether that's genetics, um, or it's because they're not getting to the care that they should be at the right time. It's, it's a complex issue that, you know, it's on my mind. I know it should be.",
+      "person_id": 2
+    },
+    {
+      "id": 4526,
+      "episode_id": 1,
+      "from_ts": "2883.97",
+      "to_ts": "2918.509",
+      "text": "So, all right. So we're going to be wrapping this up. Um,  You know, certainly a takeaway is if you have an itis, an inflammation, there are ways to be more proactive than necessarily intervention. You know, for instance, like surgical intervention. That certainly is a takeaway. It's a broad subject field, rheumatology, but there have been many, many advances for sure. So last thoughts, Paul.",
+      "person_id": 1
+    },
+    {
+      "id": 4527,
+      "episode_id": 1,
+      "from_ts": "2919.926",
+      "to_ts": "2944.111",
+      "text": " Yeah. Well, maybe we should do a show about inflammation. There's many kinds of inflammation. It's expanding. Yeah, the inflammation of gout looks different than the inflammation of rheumatoid arthritis. The other interesting thing along those lines is I saw a number of patients, let's say a half a dozen, so that's, I don't know, it's a number or not a number, who are identical twins.",
+      "person_id": 2
+    },
+    {
+      "id": 4528,
+      "episode_id": 1,
+      "from_ts": "2944.892",
+      "to_ts": "2962.425",
+      "text": "And one twin had a  rheumatoid arthritis or something, another didn't. And what's that all about? They ate the same food. They had the same cousins. So the takeaway here as we wind up is that there's a lot of arthritis out there.",
+      "person_id": 2
+    },
+    {
+      "id": 4529,
+      "episode_id": 1,
+      "from_ts": "2963.166",
+      "to_ts": "2990.019",
+      "text": "The second thing is if you have persistent problems, if you're having certain, you know, that are going on and something doesn't seem right, you should have that evaluated.  And I would go to your primary care doc to start that. I mean, primary care docs are great people and they know what's going on. And you can say, well, I think this is osteoarthritis. I think this is rheumatoid.",
+      "person_id": 2
+    },
+    {
+      "id": 4530,
+      "episode_id": 1,
+      "from_ts": "2990.039",
+      "to_ts": "3015.176",
+      "text": "I think this is something a little more complicated. And then  go see more a specialist after that. And that we do have these windows of opportunity that if you can get in and treat sooner rather than later, you can prevent a lot of problems down the line. Now that's not to say that you can cure, we don't talk about curing arthritis here.",
+      "person_id": 2
+    },
+    {
+      "id": 4531,
+      "episode_id": 1,
+      "from_ts": "3016.427",
+      "to_ts": "3032.297",
+      "text": " Although I'd like to think we could cure gout just by taking a pill every day or something like that. But I think early diagnosis and when necessary, early treatment or changes in lifestyle, I think can go a long way in helping people.",
+      "person_id": 2
+    },
+    {
+      "id": 4532,
+      "episode_id": 1,
+      "from_ts": "3033.478",
+      "to_ts": "3059.555",
+      "text": "Barry. You know, my biggest takeaway, and this is for our listeners out there, oftentimes we have like my knee hurts and you go in to see the doctor for that.  But also, you know, my wrist hurts and my ankle hurts sometimes, things like that. What I'm coming away with is that earlier recognition can have a tremendous impact on long-term disability, all those kinds of things.",
+      "person_id": 4
+    },
+    {
+      "id": 4533,
+      "episode_id": 1,
+      "from_ts": "3059.635",
+      "to_ts": "3073.279",
+      "text": "And so my takeaway is if you have, you go to the doctor and you have a joint that aches, be proactive and say, also, by the way, you know, you need to know that my, you know, I have other joints that hurt, but not as much as my knee.",
+      "person_id": 4
+    },
+    {
+      "id": 4534,
+      "episode_id": 1,
+      "from_ts": "3074.179",
+      "to_ts": "3092.905",
+      "text": " Because that's going to automatically raise yellow flags so that this is more than just, oh, it's just arthritis and you need to take some ibuprofen, things like that. So that's a big takeaway for me. I think people tend to focus, and doctors as well, and nurse practitioners, on presenting symptoms.",
+      "person_id": 4
+    },
+    {
+      "id": 4535,
+      "episode_id": 1,
+      "from_ts": "3093.246",
+      "to_ts": "3108.33",
+      "text": "And we need to make sure that even as patients, that when we come in, try and expand the view a little bit, because that could have a great impact on...  you know, on results over long term. Yeah, absolutely. Yeah. Yeah.",
+      "person_id": 4
+    },
+    {
+      "id": 4536,
+      "episode_id": 1,
+      "from_ts": "3108.57",
+      "to_ts": "3118.575",
+      "text": "Perfect. Clarence. Thank you, Dr. Paul. I have enjoyed this conversation and I have learned a lot. Good. I try to apply it.",
+      "person_id": 3
+    },
+    {
+      "id": 4537,
+      "episode_id": 1,
+      "from_ts": "3119.075",
+      "to_ts": "3119.915",
+      "text": "Okay. That's great.",
+      "person_id": 2
+    },
+    {
+      "id": 4538,
+      "episode_id": 1,
+      "from_ts": "3119.935",
+      "to_ts": "3127.329",
+      "text": "That sounds great. So maybe, you know, maybe my takeaway is, hey, doc, it hurts when I do this, you know, in my elbow.  Don't do that.",
+      "person_id": 1
+    },
+    {
+      "id": 4539,
+      "episode_id": 1,
+      "from_ts": "3130.011",
+      "to_ts": "3133.392",
+      "text": "There's a lot of jokes. Those are good jokes.",
+      "person_id": 2
+    },
+    {
+      "id": 4540,
+      "episode_id": 1,
+      "from_ts": "3133.412",
+      "to_ts": "3160.537",
+      "text": "Yeah, yeah, yeah. Hey, Paul, thanks so much. Your insights have been golden and greatly appreciated. Frankly, I've learned that it's a much broader topic than I even imagined.  And I hope our listening audience realizes that as well and acts accordingly. We have our research that will be part of our website.",
+      "person_id": 1
+    },
+    {
+      "id": 4541,
+      "episode_id": 1,
+      "from_ts": "3161.617",
+      "to_ts": "3173.42",
+      "text": "Paul, if you have anything else that you want us to add to that that you think might be useful for the listening audience, please forward it to me. I'll get it on our website for the show itself. So thank you for being with us.",
+      "person_id": 1
+    },
+    {
+      "id": 4542,
+      "episode_id": 1,
+      "from_ts": "3173.54",
+      "to_ts": "3175.561",
+      "text": "It's been a pleasure. Thanks for having me.",
+      "person_id": 2
+    },
+    {
+      "id": 4543,
+      "episode_id": 1,
+      "from_ts": "3175.581",
+      "to_ts": "3187.398",
+      "text": "It's been really good.  To our listening audience, we have great shows coming up. Our next show that we're going to be doing is on infant mortality. Until that time, everybody keep health chatting away.",
+      "person_id": 1
+    }
+  ]
+}
