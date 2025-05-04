@@ -306,7 +306,7 @@ def main():
                 log("\nInserting data into Neo4j...")
                 db = Neo4jDatabase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
                 try:
-                    db.insert_data(data, podcast_id, episode_id)
+                    db.insert_data(data)
                     log("Data successfully inserted into Neo4j!")
                 except Exception as e:
                     log(f"Error inserting data into Neo4j: {e}")
