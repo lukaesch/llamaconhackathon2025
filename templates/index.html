@@ -221,42 +221,39 @@
                 </div>
                 
                 <div class="flex flex-wrap gap-3 mt-4">
-                    <button id="reset-graph" class="flex-1 min-w-[120px] py-3 px-4 bg-gray-100 text-gray-600 font-medium rounded-lg shadow-sm hover:bg-gray-200 hover:text-blue-500 transition-colors flex items-center justify-center">Reset View</button>
-                    <button id="expand-all" class="flex-1 min-w-[120px] py-3 px-4 bg-gray-100 text-gray-600 font-medium rounded-lg shadow-sm hover:bg-gray-200 hover:text-blue-500 transition-colors flex items-center justify-center">Expand All Entities</button>
-                    <button id="toggle-physics" class="flex-1 min-w-[120px] py-3 px-4 bg-gray-100 text-gray-600 font-medium rounded-lg shadow-sm hover:bg-gray-200 hover:text-blue-500 transition-colors flex items-center justify-center">Toggle Physics</button>
-                    <button id="random-insight" class="flex-1 min-w-[120px] py-3 px-4 bg-gray-100 text-gray-600 font-medium rounded-lg shadow-sm hover:bg-gray-200 hover:text-blue-500 transition-colors flex items-center justify-center animate-[pulse_2s_infinite]">Surprise Me!</button>
+                    <button id="reset-graph" class="w-full py-3 px-4 bg-gray-100 text-gray-600 font-medium rounded-lg shadow-sm hover:bg-gray-200 hover:text-blue-500 transition-colors flex items-center justify-center">Reset View</button>
                 </div>
-<div class="flex flex-wrap gap-3 mt-4 p-4 bg-gray-50 rounded-lg">
-    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-        <div class="w-4 h-4 rounded-full bg-[#e91e63] mr-2 shadow-sm"></div>
-        <div>Person</div>
-    </div>
-    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-        <div class="w-4 h-4 rounded-full bg-[#2196f3] mr-2 shadow-sm"></div>
-        <div>Organization</div>
-    </div>
-    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-        <div class="w-4 h-4 rounded-full bg-[#4caf50] mr-2 shadow-sm"></div>
-        <div>Product</div>
-    </div>
-    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-        <div class="w-4 h-4 rounded-full bg-[#f39c12] mr-2 shadow-sm"></div>
-        <div>Episode</div>
-    </div>
-    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-        <div class="w-4 h-4 rounded-full bg-[#9c27b0] mr-2 shadow-sm"></div>
-        <div>Podcast</div>
-    </div>
-    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-        <div class="w-4 h-4 rounded-full bg-[#009688] mr-2 shadow-sm"></div>
-        <div>Concept</div>
-    </div>
-    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-        <div class="w-4 h-4 rounded-full bg-[#607d8b] mr-2 shadow-sm"></div>
-        <div>Other</div>
-    </div>
-</div>
-
+                
+                <div class="flex flex-wrap gap-3 mt-4 p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+                        <div class="w-4 h-4 rounded-full bg-[#e91e63] mr-2 shadow-sm"></div>
+                        <div>Person</div>
+                    </div>
+                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+                        <div class="w-4 h-4 rounded-full bg-[#2196f3] mr-2 shadow-sm"></div>
+                        <div>Organization</div>
+                    </div>
+                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+                        <div class="w-4 h-4 rounded-full bg-[#4caf50] mr-2 shadow-sm"></div>
+                        <div>Product</div>
+                    </div>
+                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+                        <div class="w-4 h-4 rounded-full bg-[#f39c12] mr-2 shadow-sm"></div>
+                        <div>Episode</div>
+                    </div>
+                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+                        <div class="w-4 h-4 rounded-full bg-[#9c27b0] mr-2 shadow-sm"></div>
+                        <div>Podcast</div>
+                    </div>
+                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+                        <div class="w-4 h-4 rounded-full bg-[#009688] mr-2 shadow-sm"></div>
+                        <div>Concept</div>
+                    </div>
+                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+                        <div class="w-4 h-4 rounded-full bg-[#607d8b] mr-2 shadow-sm"></div>
+                        <div>Other</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -279,9 +276,6 @@
         const selectedNodeDataDiv = document.getElementById('selected-node-data');
         const expandNodeButton = document.getElementById('expand-node');
         const resetGraphButton = document.getElementById('reset-graph');
-        const expandAllButton = document.getElementById('expand-all');
-        const togglePhysicsButton = document.getElementById('toggle-physics');
-        const randomInsightButton = document.getElementById('random-insight');
         const loaderElement = document.getElementById('loader');
         const magicNote = document.getElementById('magic-note');
         const suggestionChips = document.querySelectorAll('.suggestion-chip');
@@ -295,7 +289,7 @@
         let nodesDataset = new vis.DataSet();
         let edgesDataset = new vis.DataSet();
         
-        // Interesting insights for the "Surprise Me" button
+        // Interesting insights for questions
         const surpriseInsights = [
             "What are Elon Musk's views on AI safety?",
             "How do podcasters describe the future of blockchain?",
@@ -309,11 +303,11 @@
             "How has discussion about climate change evolved in podcasts?"
         ];
         
-        // Network options with improved visuals
+        // Optimized network options for faster rendering
         const options = {
             nodes: {
                 shape: 'dot',
-                size: 25,
+                size: 20, // Smaller size for better performance
                 font: {
                     size: 14,
                     face: 'Inter',
@@ -321,11 +315,7 @@
                 },
                 borderWidth: 2,
                 shadow: {
-                    enabled: true,
-                    color: 'rgba(0,0,0,0.2)',
-                    size: 5,
-                    x: 1,
-                    y: 1
+                    enabled: false // Disable shadows for better performance
                 }
             },
             edges: {
@@ -337,7 +327,11 @@
                 arrows: {
                     to: { enabled: true, scaleFactor: 0.5 }
                 },
-                smooth: { type: 'continuous' },
+                smooth: { 
+                    enabled: true,
+                    type: 'dynamic', // Better for performance
+                    roundness: 0.5
+                },
                 color: {
                     color: '#90A4AE',
                     highlight: '#607D8B',
@@ -351,14 +345,18 @@
                 forceAtlas2Based: {
                     gravitationalConstant: -50,
                     centralGravity: 0.01,
-                    springLength: 200,
-                    springConstant: 0.08,
-                    damping: 0.4
+                    springLength: 100, // Reduced for faster convergence
+                    springConstant: 0.15, // Increased for faster stabilization
+                    damping: 0.5, // Increased damping for faster stabilization
+                    avoidOverlap: 0.5 // Help prevent node overlap
                 },
                 stabilization: {
                     enabled: true,
-                    iterations: 1000,
-                    updateInterval: 100
+                    iterations: 100, // Reduced for performance
+                    updateInterval: 25, 
+                    fit: true,
+                    maxTime: 1000, // Limit stabilization to 1 second
+                    onlyDynamicEdges: false
                 }
             },
             interaction: {
@@ -366,8 +364,11 @@
                 tooltipDelay: 200,
                 hideEdgesOnDrag: true,
                 zoomView: true,
-                navigationButtons: true,
+                navigationButtons: false, // Disable for cleaner UI
                 keyboard: true
+            },
+            layout: {
+                improvedLayout: false // Disable for better performance with large graphs
             }
         };
         
@@ -411,6 +412,7 @@
                 }
             });
             
+            // Track stabilization progress
             network.on('stabilizationProgress', function(params) {
                 const maxWidth = 496;
                 const minWidth = 20;
@@ -418,10 +420,25 @@
                 const width = Math.max(minWidth, maxWidth * widthFactor);
             });
             
+            // When stabilization is done - COMPLETELY DISABLE PHYSICS
             network.on('stabilizationIterationsDone', function() {
-                network.setOptions({ physics: { stabilization: { enabled: false } } });
+                // Completely disable physics to ensure graph doesn't move anymore
+                network.setOptions({ 
+                    physics: { 
+                        enabled: false 
+                    } 
+                });
+                
+                // Fit the view with a consistent animation
+                network.fit({
+                    animation: {
+                        duration: 1000,
+                        easingFunction: 'easeInOutQuad'
+                    }
+                });
             });
             
+            // Mouse cursor effects
             network.on('hoverNode', function(params) {
                 document.body.style.cursor = 'pointer';
             });
@@ -444,7 +461,7 @@
             
             // Highlight the selected node
             const selectedNode = nodesDataset.get(nodeId);
-            const originalColor = selectedNode.color.background;
+            const originalColor = selectedNode.color ? selectedNode.color.background : '#4b5563';
             
             nodesDataset.update({
                 id: nodeId,
@@ -490,7 +507,7 @@
         // Reset node highlights
         function resetNodeHighlights() {
             nodesDataset.forEach((node) => {
-                const originalColor = node.color.background;
+                const originalColor = node.color ? node.color.background : '#4b5563';
                 nodesDataset.update({
                     id: node.id,
                     color: {
@@ -502,7 +519,7 @@
                         }
                     },
                     borderWidth: 2,
-                    size: 25,
+                    size: 20, // Smaller size for performance
                     opacity: 1
                 });
             });
@@ -534,170 +551,240 @@
             }
         }
         
-        // Process graph data into vis.js format with improved visuals
+        // Process graph data into vis.js format with optimized rendering
         function processGraphData(graphData) {
+            // For very large graphs, apply performance optimizations
+            const isLargeGraph = graphData.nodes && graphData.nodes.length > 50;
+            
+            // Disable physics during data load
+            if (network) {
+                network.setOptions({
+                    physics: {
+                        enabled: false
+                    }
+                });
+            }
+            
+            // Clear existing data
             nodesDataset.clear();
             edgesDataset.clear();
             
-            // Process nodes
+            // Process nodes - prepare batch data
+            const nodesToAdd = [];
             if (graphData.nodes && Array.isArray(graphData.nodes)) {
                 graphData.nodes.forEach(node => {
                     // Determine node color based on type to match the legend
                     let color;
-                    switch(node.type.toLowerCase()) {
-                        case 'person': color = '#ef4444'; break; // Red
-                        case 'organization': color = '#3b82f6'; break; // Blue
-                        case 'product': color = '#22c55e'; break; // Green
+                    const nodeType = (node.type || "").toLowerCase();
+                    
+                    switch(nodeType) {
+                        case 'person': color = '#e91e63'; break; // Red
+                        case 'organization': color = '#2196f3'; break; // Blue
+                        case 'product': color = '#4caf50'; break; // Green
                         case 'episode': color = '#f59e0b'; break; // Yellow
                         case 'podcast': color = '#9333ea'; break; // Purple
                         case 'concept': color = '#14b8a6'; break; // Teal
+                        case 'entity': 
+                            // For entities, check if they might be a more specific type
+                            if (node.properties && node.properties.type) {
+                                const entityType = node.properties.type.toLowerCase();
+                                if (entityType === 'person') color = '#e91e63';
+                                else if (entityType === 'organization') color = '#2196f3';
+                                else if (entityType === 'product') color = '#4caf50';
+                                else color = '#3f51b5'; // Default entity color
+                            } else {
+                                color = '#3f51b5'; // Default entity color
+                            }
+                            break;
                         default: color = '#4b5563'; break; // Gray for Other
                     }
                     
-                    // Add node to dataset with animation delay
-                    setTimeout(() => {
-                        nodesDataset.add({
-                            id: node.id,
-                            label: node.label,
-                            color: { 
-                                background: color, 
-                                border: '#2c3e50', 
-                                highlight: { background: color, border: '#e74c3c' } 
-                            },
-                            font: { color: '#333' },
-                            type: node.type,
-                            properties: node.properties,
-                            title: `Type: ${node.type}<br>ID: ${node.id}`
-                        });
-                    }, Math.random() * 500); // Random delay for visual effect
+                    // For large graphs, simplify the node representation
+                    const nodeOptions = {
+                        id: node.id,
+                        label: isLargeGraph ? (node.label.substring(0, 15) + (node.label.length > 15 ? '...' : '')) : node.label,
+                        color: { 
+                            background: color, 
+                            border: '#2c3e50', 
+                            highlight: { background: color, border: '#e74c3c' } 
+                        },
+                        font: { color: '#333' },
+                        type: node.type,
+                        properties: node.properties,
+                        title: `Type: ${node.type}<br>ID: ${node.id}`,
+                        // Visual differentiation for inferred nodes
+                        borderDashes: node.inferred ? [5, 5] : false
+                    };
+                    
+                    // For large graphs, further optimize rendering
+                    if (isLargeGraph) {
+                        nodeOptions.size = 15; // Smaller nodes
+                        nodeOptions.font.size = 12; // Smaller font
+                    }
+                    
+                    nodesToAdd.push(nodeOptions);
                 });
+                
+                // Add all nodes at once (better performance)
+                nodesDataset.add(nodesToAdd);
             }
 
-            // Process edges with slight delay for visual effect
-            setTimeout(() => {
-                if (graphData.edges && Array.isArray(graphData.edges)) {
-                    graphData.edges.forEach((edge, index) => {
-                        setTimeout(() => {
-                            edgesDataset.add({
-                                id: edge.id || `${edge.from}_${edge.to}_${Date.now()}`,
-                                from: edge.from,
-                                to: edge.to,
-                                label: edge.label,
-                                properties: edge.properties,
-                                title: `Relationship: ${edge.label}`
-                            });
-                        }, index * 30); // Sequential delay for visual effect
-                    });
-                }
-            }, 600);
+            // Process edges - prepare batch data
+            const edgesToAdd = [];
+            if (graphData.edges && Array.isArray(graphData.edges)) {
+                graphData.edges.forEach(edge => {
+                    const edgeOptions = {
+                        id: edge.id,
+                        from: edge.from,
+                        to: edge.to,
+                        label: isLargeGraph ? '' : edge.label, // Hide labels in large graphs
+                        properties: edge.properties,
+                        title: `Relationship: ${edge.label}`,
+                        // Visual differentiation for inferred edges
+                        dashes: edge.inferred ? [5, 5] : false,
+                        color: edge.inferred ? {color: '#999999', opacity: 0.7} : undefined
+                    };
+                    
+                    // For large graphs, further optimize rendering
+                    if (isLargeGraph) {
+                        edgeOptions.width = 1; // Thinner edges
+                        edgeOptions.arrows = { to: { enabled: false } }; // No arrows
+                        edgeOptions.smooth = { enabled: false }; // Straight lines
+                    }
+                    
+                    edgesToAdd.push(edgeOptions);
+                });
+                
+                // Add all edges at once (better performance)
+                edgesDataset.add(edgesToAdd);
+            }
             
             // If network doesn't exist, initialize it
             if (!network) {
                 initNetwork();
             } else {
-                // Otherwise, fit the view to see all nodes with animation
-                setTimeout(() => {
-                    network.fit({animation: {duration: 1000, easingFunction: 'easeInOutQuad'}});
-                }, 1000);
+                // Enable physics for 1-second stabilization and then freeze
+                network.setOptions({
+                    physics: {
+                        enabled: true,
+                        stabilization: {
+                            enabled: true,
+                            iterations: isLargeGraph ? 50 : 100, // Fewer iterations for large graphs
+                            updateInterval: 25,
+                            maxTime: 1000 // Strict 1-second time limit for stabilization
+                        },
+                        solver: 'forceAtlas2Based',
+                        forceAtlas2Based: {
+                            gravitationalConstant: -50,
+                            centralGravity: 0.01,
+                            springLength: 100,
+                            springConstant: 0.15,
+                            damping: 0.5
+                        }
+                    }
+                });
+                
+                // After 1 second, physics will be disabled by the stabilizationIterationsDone event
             }
         }
-        
+
         // Ask question and update UI with improved animations
        async function askQuestion(question = questionInput.value.trim()) {
-    if (!question) return;
-    
-    try {
-        // Update UI for loading state
-        askText.style.display = 'none';
-        askLoading.style.display = 'inline';
-        loaderElement.style.display = 'block';
-        answerDiv.innerHTML = '<div class="w-8 h-8 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto"></div>';
-        answerDiv.classList.add('loading');
-        errorMessageDiv.style.display = 'none';
-        
-        // Clear existing data
-        if (cypherQueryDiv) cypherQueryDiv.textContent = '// Loading query...';
-        if (rawResultsDiv) rawResultsDiv.textContent = '// Loading results...';
-        nodeDetailsDiv.style.display = 'none';
-        
-        // Make API request
-        const response = await fetch('/ask', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ question })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Update UI with responses
-        answerDiv.classList.remove('loading');
-        answerDiv.innerHTML = '';
-        
-        // Smooth animation for showing answer
-        setTimeout(() => {
-            // Initialize markdown-it
-            const md = window.markdownit();
+            if (!question) return;
             
-            // Check if the answer appears to contain markdown
-            const answer = data.answer || 'No answer generated.';
-            
-            // If answer contains markdown indicators, render it as markdown
-            if (answer.includes('**') || answer.includes('##') || 
-                answer.includes('```') || answer.includes('*') || 
-                answer.includes('[') || answer.includes('|')) {
-                answerDiv.innerHTML = md.render(answer);
-            } else {
-                // Otherwise use the highlight method for plain text
-                const formattedAnswer = addHighlights(answer);
-                answerDiv.innerHTML = formattedAnswer;
+            try {
+                // Update UI for loading state
+                askText.style.display = 'none';
+                askLoading.style.display = 'inline';
+                loaderElement.style.display = 'block';
+                answerDiv.innerHTML = '<div class="w-8 h-8 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto"></div>';
+                answerDiv.classList.add('loading');
+                errorMessageDiv.style.display = 'none';
+                
+                // Clear existing data
+                if (cypherQueryDiv) cypherQueryDiv.textContent = '// Loading query...';
+                if (rawResultsDiv) rawResultsDiv.textContent = '// Loading results...';
+                nodeDetailsDiv.style.display = 'none';
+                
+                // Make API request
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update UI with responses
+                answerDiv.classList.remove('loading');
+                answerDiv.innerHTML = '';
+                
+                // Smooth animation for showing answer
+                setTimeout(() => {
+                    // Initialize markdown-it
+                    const md = window.markdownit();
+                    
+                    // Check if the answer appears to contain markdown
+                    const answer = data.answer || 'No answer generated.';
+                    
+                    // If answer contains markdown indicators, render it as markdown
+                    if (answer.includes('**') || answer.includes('##') || 
+                        answer.includes('```') || answer.includes('*') || 
+                        answer.includes('[') || answer.includes('|')) {
+                        answerDiv.innerHTML = md.render(answer);
+                    } else {
+                        // Otherwise use the highlight method for plain text
+                        const formattedAnswer = addHighlights(answer);
+                        answerDiv.innerHTML = formattedAnswer;
+                    }
+                    
+                    answerDiv.style.opacity = 1;
+                    
+                    // Set other data
+                    if (cypherQueryDiv) cypherQueryDiv.textContent = data.cypher_query || '// No query available';
+                    if (rawResultsDiv) rawResultsDiv.textContent = JSON.stringify(data.results || {}, null, 2);
+                    
+                    // Show a magic notification occasionally
+                    if (Math.random() > 0.7) {
+                        setTimeout(showMagicNote, 3000);
+                    }
+                }, 300);
+                
+                // Display error if there is one
+                if (data.error) {
+                    errorMessageDiv.textContent = `Query Error: ${data.error}`;
+                    errorMessageDiv.style.display = 'block';
+                    answerDiv.classList.add('error');
+                } else {
+                    errorMessageDiv.style.display = 'none';
+                    answerDiv.classList.remove('error');
+                }
+                
+                // Visualize the graph with animation
+                if (data.graph_data) {
+                    processGraphData(data.graph_data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                answerDiv.textContent = `Error: ${error.message}`;
+                answerDiv.classList.remove('loading');
+                answerDiv.classList.add('error');
+                errorMessageDiv.textContent = `Error: ${error.message}`;
+                errorMessageDiv.style.display = 'block';
+            } finally {
+                // Reset UI state
+                askText.style.display = 'inline';
+                askLoading.style.display = 'none';
+                loaderElement.style.display = 'none';
             }
-            
-            answerDiv.style.opacity = 1;
-            
-            // Set other data
-            if (cypherQueryDiv) cypherQueryDiv.textContent = data.cypher_query || '// No query available';
-            if (rawResultsDiv) rawResultsDiv.textContent = JSON.stringify(data.results || {}, null, 2);
-            
-            // Show a magic notification occasionally
-            if (Math.random() > 0.7) {
-                setTimeout(showMagicNote, 3000);
-            }
-        }, 300);
-        
-        // Display error if there is one
-        if (data.error) {
-            errorMessageDiv.textContent = `Query Error: ${data.error}`;
-            errorMessageDiv.style.display = 'block';
-            answerDiv.classList.add('error');
-        } else {
-            errorMessageDiv.style.display = 'none';
-            answerDiv.classList.remove('error');
-        }
-        
-        // Visualize the graph with animation
-        if (data.graph_data) {
-            processGraphData(data.graph_data);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        answerDiv.textContent = `Error: ${error.message}`;
-        answerDiv.classList.remove('loading');
-        answerDiv.classList.add('error');
-        errorMessageDiv.textContent = `Error: ${error.message}`;
-        errorMessageDiv.style.display = 'block';
-    } finally {
-        // Reset UI state
-        askText.style.display = 'inline';
-        askLoading.style.display = 'none';
-        loaderElement.style.display = 'none';
-    }
-} 
+        } 
+                
         // Add highlights to the answer text
         function addHighlights(text) {
             // Find entities to highlight (words starting with uppercase letters)
@@ -744,7 +831,7 @@
             try {
                 // Visual feedback
                 const node = nodesDataset.get(nodeId);
-                const originalColor = node.color.background;
+                const originalColor = node.color ? node.color.background : '#4b5563';
                 
                 // "Loading" effect on the node
                 nodesDataset.update({
@@ -772,11 +859,17 @@
                             border: '#2c3e50',
                             highlight: { background: originalColor, border: '#e74c3c' }
                         },
-                        size: 25
+                        size: 20
                     });
                 }, 300);
                 
-                // Add new nodes and edges to the existing network with animation
+                // Check if we're dealing with a large expansion
+                const isLargeExpansion = data.nodes && data.nodes.length > 20;
+                
+                // Disable physics during data addition
+                network.setOptions({ physics: { enabled: false } });
+                
+                // Add new nodes all at once for better performance
                 if (data.nodes && Array.isArray(data.nodes)) {
                     // First collect all node IDs to add
                     const newNodeIds = new Set();
@@ -784,11 +877,9 @@
                     
                     // Filter out nodes that already exist
                     const existingNodeIds = new Set(nodesDataset.getIds().map(id => String(id)));
-                    const nodesToAdd = data.nodes.filter(node => !existingNodeIds.has(String(node.id)));
-                    
-                    // Add nodes with animation
-                    nodesToAdd.forEach((node, index) => {
-                        setTimeout(() => {
+                    const nodesToAdd = data.nodes
+                        .filter(node => !existingNodeIds.has(String(node.id)))
+                        .map(node => {
                             let color;
                             switch(node.type.toLowerCase()) {
                                 case 'person': color = '#e74c3c'; break;
@@ -802,58 +893,78 @@
                                 default: color = '#34495e'; // default gray
                             }
                             
-                            nodesDataset.add({
+                            // For large expansions, simplify nodes
+                            return {
                                 id: node.id,
-                                label: node.label,
+                                label: isLargeExpansion ? 
+                                    (node.label.substring(0, 15) + (node.label.length > 15 ? '...' : '')) : 
+                                    node.label,
                                 color: { 
                                     background: color, 
                                     border: '#2c3e50',
                                     highlight: { background: color, border: '#e74c3c' }
                                 },
-                                font: { color: '#333' },
+                                font: { 
+                                    color: '#333',
+                                    size: isLargeExpansion ? 10 : 14 
+                                },
                                 type: node.type,
                                 properties: node.properties,
-                                title: `Type: ${node.type}<br>ID: ${node.id}`
-                            });
-                        }, index * 50);
-                    });
+                                title: `Type: ${node.type}<br>ID: ${node.id}`,
+                                size: isLargeExpansion ? 15 : 20
+                            };
+                        });
+                    
+                    if (nodesToAdd.length > 0) {
+                        nodesDataset.add(nodesToAdd);
+                    }
                 }
                 
-                // Add new edges with animation
-                setTimeout(() => {
-                    if (data.edges && Array.isArray(data.edges)) {
-                        // Filter out edges that already exist
-                        const existingEdgeIds = new Set(edgesDataset.getIds().map(id => String(id)));
-                        
-                        data.edges.forEach((edge, index) => {
-                            setTimeout(() => {
-                                const edgeId = edge.id || `${edge.from}_${edge.to}_${edge.label}`;
-                                
-                                if (!existingEdgeIds.has(String(edgeId))) {
-                                    edgesDataset.add({
-                                        id: edgeId,
-                                        from: edge.from,
-                                        to: edge.to,
-                                        label: edge.label,
-                                        properties: edge.properties,
-                                        title: `Relationship: ${edge.label}`
-                                    });
-                                }
-                            }, index * 30);
-                        });
+                // Add new edges all at once for better performance
+                if (data.edges && Array.isArray(data.edges)) {
+                    // Filter out edges that already exist
+                    const existingEdgeIds = new Set(edgesDataset.getIds().map(id => String(id)));
+                    const edgesToAdd = data.edges
+                        .filter(edge => !existingEdgeIds.has(String(edge.id || `${edge.from}_${edge.to}_${edge.label}`)))
+                        .map(edge => ({
+                            id: edge.id || `${edge.from}_${edge.to}_${edge.label}`,
+                            from: edge.from,
+                            to: edge.to,
+                            label: isLargeExpansion ? '' : edge.label,
+                            properties: edge.properties,
+                            title: `Relationship: ${edge.label}`,
+                            width: isLargeExpansion ? 1 : 1.5,
+                            smooth: isLargeExpansion ? { enabled: false } : { enabled: true, type: 'dynamic' }
+                        }));
+                    
+                    if (edgesToAdd.length > 0) {
+                        edgesDataset.add(edgesToAdd);
                     }
-                }, 500);
+                }
+                
+                // Enable physics for exactly 1 second to stabilize, then disable
+                network.setOptions({ 
+                    physics: { 
+                        enabled: true,
+                        stabilization: {
+                            enabled: true,
+                            iterations: isLargeExpansion ? 50 : 100,
+                            updateInterval: 25,
+                            maxTime: 1000
+                        }
+                    }
+                });
                 
                 // Focus on the expanded node
-                setTimeout(() => {
-                    network.focus(nodeId, { 
-                        scale: 1, 
-                        animation: {
-                            duration: 1000,
-                            easingFunction: 'easeInOutQuad'
-                        }
-                    });
-                }, 800);
+                network.focus(nodeId, { 
+                    scale: 1, 
+                    animation: {
+                        duration: 1000,
+                        easingFunction: 'easeInOutQuad'
+                    }
+                });
+                
+                // After 1 second, the stabilizationIterationsDone event will disable physics
                 
             } catch (error) {
                 console.error('Error expanding node:', error);
@@ -863,125 +974,18 @@
             }
         }
         
-        // Expand all entity nodes in the current graph with visual feedback
-        async function expandAllEntities() {
-            try {
-                const nodes = nodesDataset.get();
-                const entityNodes = nodes.filter(node => 
-                    node.type.toLowerCase() !== 'episode' && 
-                    node.type.toLowerCase() !== 'podcast'
-                );
-                
-                if (entityNodes.length === 0) {
-                    alert('No entity nodes to expand.');
-                    return;
-                }
-                
-                // Show loader and disable button
-                loaderElement.style.display = 'block';
-                expandAllButton.disabled = true;
-                expandAllButton.textContent = 'Expanding...';
-                
-                // Expand nodes sequentially to avoid overwhelming the server
-                for (const node of entityNodes) {
-                    await expandEntityNode(node.id);
-                    // Small delay between expansions
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                }
-                
-                // Show success notification
-                showMagicNote('Expanded all entity nodes successfully!');
-                
-            } catch (error) {
-                console.error('Error expanding all entities:', error);
-                alert(`Error expanding all entities: ${error.message}`);
-            } finally {
-                // Hide loader and restore button
-                loaderElement.style.display = 'none';
-                expandAllButton.disabled = false;
-                expandAllButton.textContent = 'Expand All Entities';
-            }
-        }
-        
-        // Toggle physics simulation with visual feedback
-        function togglePhysics() {
-            const physicsEnabled = network.physics.options.enabled;
-            
-            // Add animation effect
-            if (physicsEnabled) {
-                // When disabling physics, first stabilize
-                network.setOptions({ 
-                    physics: { 
-                        enabled: false 
-                    }
-                });
-                togglePhysicsButton.textContent = 'Enable Physics';
-            } else {
-                // When enabling physics, add more dynamic forces temporarily
-                network.setOptions({ 
-                    physics: { 
-                        enabled: true,
-                        stabilization: {
-                            enabled: false
-                        },
-                        barnesHut: {
-                            gravitationalConstant: -80,
-                            centralGravity: 0.3,
-                            springLength: 95,
-                            springConstant: 0.04
-                        }
-                    }
-                });
-                
-                // Then restore normal physics after a moment
-                setTimeout(() => {
-                    network.setOptions({ 
-                        physics: { 
-                            enabled: true,
-                            stabilization: {
-                                enabled: false
-                            },
-                            solver: 'forceAtlas2Based',
-                            forceAtlas2Based: {
-                                gravitationalConstant: -50,
-                                centralGravity: 0.01,
-                                springLength: 200,
-                                springConstant: 0.08
-                            }
-                        }
-                    });
-                }, 1500);
-                
-                togglePhysicsButton.textContent = 'Disable Physics';
-            }
-        }
-        
         // Reset graph view with animation
         function resetGraphView() {
             // First reset all highlights
             resetNodeHighlights();
             
-            // Then animate to fit view
+            // Then animate to fit view without enabling physics
             network.fit({
                 animation: {
                     duration: 1000,
                     easingFunction: 'easeInOutQuad'
                 }
             });
-        }
-        
-        // Ask a random surprising question
-        function askRandomInsight() {
-            const randomIndex = Math.floor(Math.random() * surpriseInsights.length);
-            const randomQuestion = surpriseInsights[randomIndex];
-            questionInput.value = randomQuestion;
-            
-            // Add some animation to the input
-            questionInput.style.backgroundColor = '#f8f9fa';
-            setTimeout(() => {
-                questionInput.style.backgroundColor = '';
-                askQuestion(randomQuestion);
-            }, 300);
         }
         
         // Show magic notification
@@ -996,6 +1000,20 @@
                 magicNote.style.transform = 'translateY(100px)';
                 magicNote.style.opacity = 0;
             }, 5000);
+        }
+        
+        // Ask a random question from the insights list
+        function askRandomInsight() {
+            const randomIndex = Math.floor(Math.random() * surpriseInsights.length);
+            const randomQuestion = surpriseInsights[randomIndex];
+            questionInput.value = randomQuestion;
+            
+            // Add some animation to the input
+            questionInput.style.backgroundColor = '#f8f9fa';
+            setTimeout(() => {
+                questionInput.style.backgroundColor = '';
+                askQuestion(randomQuestion);
+            }, 300);
         }
         
         // Event Listeners
@@ -1024,15 +1042,6 @@
             
             // Reset graph button
             resetGraphButton.addEventListener('click', resetGraphView);
-            
-            // Expand all button
-            expandAllButton.addEventListener('click', expandAllEntities);
-            
-            // Toggle physics button
-            togglePhysicsButton.addEventListener('click', togglePhysics);
-            
-            // Random insight button
-            randomInsightButton.addEventListener('click', askRandomInsight);
             
             // Magic note click
             magicNote.addEventListener('click', askRandomInsight);
@@ -1075,8 +1084,7 @@
                 });
             });
             
-            // Pre-populate the question with an engaging example
-            questionInput.value = "Who is the CEO of Tesla and what other companies is he involved with?";
+            questionInput.value = "";
             
             // Show tutorial notification after a moment
             setTimeout(() => {

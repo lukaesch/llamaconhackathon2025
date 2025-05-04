@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import re
-import time
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import requests
@@ -1565,79 +1564,52 @@ Fix the query and create a simpler alternative that will work with the database.
     
     def _process_results_for_visualization(self, query_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Transform query results into graph visualization format with improved handling"""
-        logger.info(f"Processing {len(query_results)} results for visualization")
         nodes = {}
         edges = []
         
-        # Track which properties were found to help with node identification
-        found_properties = {
-            "podcast": False,
-            "episode": False,
-            "entity": False,
-            "relationship": False
-        }
-        
-        # Process each result record
+        # First pass: extract all nodes
         for record in query_results:
             for key, value in record.items():
-                # Skip null values and non-dict values (we're looking for node-like objects)
+                # Skip null values and non-dict values
                 if value is None or not isinstance(value, dict):
                     continue
                 
                 # Extract type information if available
-                node_type = value.get("_type", "unknown")
+                node_type = value.get("_type", "Unknown")
+                if "_labels" in value and value["_labels"]:
+                    node_type = value["_labels"][0]
+                    
                 node_id = self._get_node_id(value)
-                
-                # Track property types found
-                if node_type == "Podcast":
-                    found_properties["podcast"] = True
-                elif node_type == "Episode":
-                    found_properties["episode"] = True
-                elif node_type and node_type not in ["Podcast", "Episode"]:
-                    found_properties["entity"] = True
                 
                 # Get appropriate label for the node
                 node_label = self._get_node_label(value, node_type)
                 
                 # Add the node if not already added
                 if node_id not in nodes:
-                    # Determine color based on node type
-                    color = self._get_node_color(node_type)
-                    
                     nodes[node_id] = {
                         "id": node_id,
                         "label": node_label,
                         "type": node_type,
-                        "properties": value,
-                        "color": color
+                        "properties": value
                     }
         
-        # Second pass: extract relationships by matching nodes found in the first pass
+        # Second pass: extract edges between nodes that we found
         for record in query_results:
+            # Look for explicit relationship objects
             for key, value in record.items():
-                # Skip non-relationship values
-                if value is None or not isinstance(value, dict) or not value.get("_type"):
+                if value is None or not isinstance(value, dict):
                     continue
-                
+                    
                 # Check if this is a relationship
-                rel_type = value.get("_type")
-                
-                # Track if we found relationships
-                if rel_type and not key.startswith("_"):
-                    found_properties["relationship"] = True
-                
-                # Find source and target nodes in this record
-                source_id = None
-                target_id = None
-                
-                # Get other keys in this record to find connected nodes
-                other_keys = [k for k in record.keys() if k != key]
-                
-                if len(other_keys) >= 2:
-                    # Find which nodes are connected by this relationship
-                    for other_key in other_keys:
-                        if other_key not in ["properties", "graph_data"] and record[other_key] and isinstance(record[other_key], dict):
-                            node_id = self._get_node_id(record[other_key])
+                if isinstance(value, dict) and "_type" in value and value.get("_id"):
+                    source_id = None
+                    target_id = None
+                    rel_type = value.get("_type")
+                    
+                    # Try to find source and target in other values of this record
+                    for other_key, other_value in record.items():
+                        if other_key != key and isinstance(other_value, dict) and "_id" in other_value:
+                            node_id = self._get_node_id(other_value)
                             if node_id in nodes:
                                 if source_id is None:
                                     source_id = node_id
@@ -1645,105 +1617,55 @@ Fix the query and create a simpler alternative that will work with the database.
                                     target_id = node_id
                                     break
                     
-                    # Create the edge
-                    if source_id and target_id and source_id != target_id:
+                    # Create edge if we found both source and target
+                    if source_id and target_id:
                         edge_id = f"{source_id}_{rel_type}_{target_id}"
-                        
-                        # Avoid adding duplicate edges
-                        if not any(edge["id"] == edge_id for edge in edges):
-                            edges.append({
-                                "id": edge_id,
-                                "from": source_id,
-                                "to": target_id,
-                                "label": rel_type,
-                                "properties": value
-                            })
+                        edges.append({
+                            "id": edge_id,
+                            "from": source_id,
+                            "to": target_id,
+                            "label": rel_type,
+                            "properties": value
+                        })
+            
+            # If no explicit relationships, infer from array values
+            for key, value in record.items():
+                if isinstance(value, list) and len(value) > 0 and all(isinstance(x, dict) for x in value):
+                    # This might be a list of relationships
+                    for rel in value:
+                        if "_type" in rel:  # It's a relationship
+                            rel_type = rel.get("_type")
+                            
+                            # Try to find nodes in this record
+                            node_ids = []
+                            for other_key, other_value in record.items():
+                                if other_key != key and isinstance(other_value, dict) and "_id" in other_value:
+                                    node_id = self._get_node_id(other_value)
+                                    if node_id in nodes:
+                                        node_ids.append(node_id)
+                            
+                            # If we found exactly two nodes, create an edge
+                            if len(node_ids) == 2:
+                                edge_id = f"{node_ids[0]}_{rel_type}_{node_ids[1]}"
+                                edges.append({
+                                    "id": edge_id,
+                                    "from": node_ids[0],
+                                    "to": node_ids[1],
+                                    "label": rel_type,
+                                    "properties": rel
+                                })
         
-        # If we didn't identify any real nodes or relationships but have results,
-        # try to infer structure from the results
+        # If no nodes found but we have results, return a placeholder node
         if len(nodes) == 0 and len(query_results) > 0:
-            # Check if we have podcast-related data
-            podcast_candidates = []
-            episode_candidates = []
-            
-            for record in query_results:
-                # Look for podcast-like fields
-                if any(key.endswith('podcast_title') or key == 'podcast_title' for key in record.keys()):
-                    found_properties["podcast"] = True
-                    
-                    for key, value in record.items():
-                        if 'podcast_title' in key and value:
-                            podcast_candidates.append({
-                                'id': f"podcast_{value}",
-                                'title': value
-                            })
-                
-                # Look for episode-like fields
-                if any(key.endswith('episode_title') or key == 'episode_title' for key in record.keys()):
-                    found_properties["episode"] = True
-                    
-                    for key, value in record.items():
-                        if 'episode_title' in key and value:
-                            episode_candidates.append({
-                                'id': f"episode_{value}",
-                                'title': value
-                            })
-            
-            # Add inferred podcast nodes
-            for podcast in podcast_candidates:
-                if podcast['id'] not in nodes:
-                    nodes[podcast['id']] = {
-                        "id": podcast['id'],
-                        "label": podcast['title'],
-                        "type": "Podcast",
-                        "properties": {"podcast_title": podcast['title']},
-                        "color": self._get_node_color("Podcast"),
-                        "inferredNode": True
-                    }
-            
-            # Add inferred episode nodes and connect to podcasts
-            for episode in episode_candidates:
-                if episode['id'] not in nodes:
-                    nodes[episode['id']] = {
-                        "id": episode['id'],
-                        "label": episode['title'],
-                        "type": "Episode",
-                        "properties": {"episode_title": episode['title']},
-                        "color": self._get_node_color("Episode"),
-                        "inferredNode": True
-                    }
-                    
-                    # Connect to a podcast if we have any
-                    if podcast_candidates:
-                        # Connect to the first podcast for simplicity
-                        podcast_id = podcast_candidates[0]['id']
-                        
-                        if podcast_id in nodes:
-                            edge_id = f"{podcast_id}_HAS_EPISODE_{episode['id']}"
-                            edges.append({
-                                "id": edge_id,
-                                "from": podcast_id,
-                                "to": episode['id'],
-                                "label": "HAS_EPISODE",
-                                "inferredEdge": True
-                            })
-        
-        # If we still have no nodes, create a fallback node with the results count
-        if len(nodes) == 0:
-            results_node_id = "results_overview"
-            nodes[results_node_id] = {
-                "id": results_node_id,
+            nodes["results_overview"] = {
+                "id": "results_overview",
                 "label": f"Results ({len(query_results)} items)",
                 "type": "Results",
-                "properties": {"count": len(query_results)},
-                "color": {"background": "#607D8B", "border": "#455A64"},
-                "shape": "box",
-                "summary": True
+                "properties": {"count": len(query_results)}
             }
         
-        logger.info(f"Visualization processing complete: {len(nodes)} nodes and {len(edges)} edges")
         return {"nodes": list(nodes.values()), "edges": edges}
-    
+
     def _get_node_id(self, node_data: Dict[str, Any]) -> str:
         """Get a consistent node ID from node data"""
         # First try to use Neo4j ID
@@ -1835,178 +1757,96 @@ Fix the query and create a simpler alternative that will work with the database.
         # Process and merge exploration results
         exploration_results = exploration_data.get("exploration_results", [])
         
-        # Keep track of how many items we add from each source
-        addition_stats = {
-            "main_query": {
-                "nodes": len(nodes_by_id),
-                "edges": len(edges_by_id)
-            },
-            "exploration": {
-                "nodes": 0,
-                "edges": 0
-            }
-        }
+        # Remove "Results overview" node if it exists and we'll be adding real nodes
+        if "results_overview" in nodes_by_id and exploration_results:
+            del nodes_by_id["results_overview"]
         
         # Merge nodes and edges from exploration steps
         for step in exploration_results:
-            if step.get("error") or not step.get("graph_data"):
+            if step.get("error") or not step.get("results"):
                 continue
                 
-            step_graph = step.get("graph_data", {})
-            step_desc = step.get("description", "Exploration")
+            step_graph = self._process_results_for_visualization(step.get("results", []))
             
             # Add unique nodes from this step
             for node in step_graph.get("nodes", []):
-                if node["id"] not in nodes_by_id:
-                    # Mark as coming from exploration
-                    node["source"] = "exploration"
-                    node["exploration_step"] = step_desc
+                if node["id"] not in nodes_by_id and node["id"] != "results_overview":
+                    # Add to combined graph (without frontend styling info)
+                    clean_node = {
+                        "id": node["id"],
+                        "label": node["label"],
+                        "type": node["type"],
+                        "properties": node.get("properties", {})
+                    }
+                    nodes_by_id[node["id"]] = clean_node
                     
-                    # Add to combined graph
-                    nodes_by_id[node["id"]] = node
-                    addition_stats["exploration"]["nodes"] += 1
-            
             # Add unique edges from this step
             for edge in step_graph.get("edges", []):
                 if edge["id"] not in edges_by_id:
                     # Only add if both source and target nodes exist
                     if edge["from"] in nodes_by_id and edge["to"] in nodes_by_id:
-                        # Mark as coming from exploration
-                        edge["source"] = "exploration"
-                        edge["exploration_step"] = step_desc
-                        
-                        # Add to combined graph
-                        edges_by_id[edge["id"]] = edge
-                        addition_stats["exploration"]["edges"] += 1
+                        # Create clean edge object
+                        clean_edge = {
+                            "id": edge["id"],
+                            "from": edge["from"],
+                            "to": edge["to"],
+                            "label": edge["label"],
+                            "properties": edge.get("properties", {})
+                        }
+                        edges_by_id[edge["id"]] = clean_edge
+        
+        # Infer missing relationships between nodes
+        for step in exploration_results:
+            if step.get("error") or not step.get("results"):
+                continue
+            
+            # Look for pairs of nodes that should be connected
+            results = step.get("results", [])
+            for result in results:
+                node_ids_in_result = []
+                
+                # Find all nodes in this result
+                for key, value in result.items():
+                    if isinstance(value, dict) and "_id" in value:
+                        node_id = f"node_{value['_id']}"
+                        if node_id in nodes_by_id:
+                            node_ids_in_result.append(node_id)
+                
+                # Connect nodes found in the same result if they're not already connected
+                if len(node_ids_in_result) >= 2:
+                    for i in range(len(node_ids_in_result)):
+                        for j in range(i+1, len(node_ids_in_result)):
+                            source_id = node_ids_in_result[i]
+                            target_id = node_ids_in_result[j]
+                            
+                            # Check if connection already exists
+                            connection_exists = False
+                            for edge_id, edge in edges_by_id.items():
+                                if (edge["from"] == source_id and edge["to"] == target_id) or \
+                                   (edge["from"] == target_id and edge["to"] == source_id):
+                                    connection_exists = True
+                                    break
+                            
+                            if not connection_exists:
+                                # Create inferred relationship
+                                edge_id = f"{source_id}_RELATED_TO_{target_id}"
+                                edges_by_id[edge_id] = {
+                                    "id": edge_id,
+                                    "from": source_id,
+                                    "to": target_id,
+                                    "label": "RELATED_TO",
+                                    "inferred": True
+                                }
 
-# Create final graph
+        # Create final graph
         final_graph = {
             "nodes": list(nodes_by_id.values()),
             "edges": list(edges_by_id.values())
         }
         
         logger.info(f"Final graph contains {len(final_graph['nodes'])} nodes and {len(final_graph['edges'])} edges")
-        logger.info(f"Added {addition_stats['exploration']['nodes']} nodes and {addition_stats['exploration']['edges']} edges from exploration")
-        
-        # Enrich the graph with additional relationship inference if needed
-        final_graph = self._enrich_graph_structure(final_graph)
         
         return final_graph
-    
-    def _enrich_graph_structure(self, graph_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Add inferred relationships and structural elements to enhance visualization"""
-        nodes = graph_data["nodes"]
-        edges = graph_data["edges"]
-        
-        # Track node types present in the graph
-        node_types = {}
-        for node in nodes:
-            node_type = node.get("type", "unknown")
-            if node_type in node_types:
-                node_types[node_type].append(node)
-            else:
-                node_types[node_type] = [node]
-        
-        # Special handling for Podcast/Episode relationships
-        if "Podcast" in node_types and "Episode" in node_types:
-            # Check if we already have podcast->episode connections
-            has_podcast_episode_connections = False
-            for edge in edges:
-                if edge.get("label") == "HAS_EPISODE":
-                    has_podcast_episode_connections = True
-                    break
-            
-            # If no connections, try to infer them
-            if not has_podcast_episode_connections:
-                podcasts = node_types["Podcast"]
-                episodes = node_types["Episode"]
-                
-                # If only one podcast, connect all episodes to it
-                if len(podcasts) == 1:
-                    podcast = podcasts[0]
-                    for episode in episodes:
-                        edge_id = f"{podcast['id']}_HAS_EPISODE_{episode['id']}"
-                        
-                        # Add the edge if not already present
-                        if not any(e["id"] == edge_id for e in edges):
-                            edges.append({
-                                "id": edge_id,
-                                "from": podcast["id"],
-                                "to": episode["id"],
-                                "label": "HAS_EPISODE",
-                                "inferred": True,
-                                "dashes": True  # Visual indication this is inferred
-                            })
-                            logger.info(f"Added inferred HAS_EPISODE relationship from {podcast['label']} to {episode['label']}")
-        
-        # Connect orphaned nodes to a central node if needed
-        orphaned_nodes = []
-        connected_node_ids = set()
-        
-        # Find all connected node IDs
-        for edge in edges:
-            connected_node_ids.add(edge["from"])
-            connected_node_ids.add(edge["to"])
-        
-        # Find orphaned nodes
-        for node in nodes:
-            if node["id"] not in connected_node_ids:
-                orphaned_nodes.append(node)
-        
-        # If we have orphaned nodes, connect them to the most relevant central node
-        if orphaned_nodes and len(nodes) > len(orphaned_nodes):
-            # Find best central node (prefer Podcast or concept node)
-            central_node = None
-            
-            # Priority: Podcast > topic > any connected node
-            if "Podcast" in node_types and node_types["Podcast"]:
-                central_node = node_types["Podcast"][0]
-            elif "Topic" in node_types and node_types["Topic"]:
-                central_node = node_types["Topic"][0]
-            else:
-                # Find the node with most connections
-                node_connections = {}
-                for edge in edges:
-                    for node_id in [edge["from"], edge["to"]]:
-                        if node_id in node_connections:
-                            node_connections[node_id] += 1
-                        else:
-                            node_connections[node_id] = 1
-                
-                # Find node with most connections
-                most_connections = 0
-                for node_id, count in node_connections.items():
-                    if count > most_connections:
-                        most_connections = count
-                        for node in nodes:
-                            if node["id"] == node_id:
-                                central_node = node
-                                break
-            
-            # Connect orphaned nodes to central node
-            if central_node:
-                for orphan in orphaned_nodes:
-                    edge_id = f"{central_node['id']}_RELATED_TO_{orphan['id']}"
-                    
-                    # Add the edge if not already present
-                    if not any(e["id"] == edge_id for e in edges):
-                        edges.append({
-                            "id": edge_id,
-                            "from": central_node["id"],
-                            "to": orphan["id"],
-                            "label": "RELATED_TO",
-                            "inferred": True,
-                            "dashes": True,  # Visual indication this is inferred
-                            "color": {"color": "#aaaaaa", "opacity": 0.5}  # Light gray, semi-transparent
-                        })
-                        logger.info(f"Added connection from central node to orphaned node {orphan['label']}")
-        
-        # Return the enriched graph
-        return {
-            "nodes": nodes,
-            "edges": edges
-        }
-
 
 @app.route("/")
 def index():
