@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 import time
@@ -8,6 +9,17 @@ import requests
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 from neo4j import GraphDatabase
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -38,12 +50,15 @@ class Neo4jDatabase:
         self._labels = None
         self._relationship_types = None
         self._property_keys = None
+        logger.info("Neo4j database connection initialized")
 
     def close(self):
         self.driver.close()
+        logger.info("Neo4j database connection closed")
 
     def get_metadata(self):
         """Get database metadata (labels, relationship types, property keys)"""
+        logger.info("Fetching database metadata")
         with self.driver.session() as session:
             # Get node labels
             labels_result = session.run("CALL db.labels()")
@@ -57,6 +72,7 @@ class Neo4jDatabase:
             prop_result = session.run("CALL db.propertyKeys()")
             properties = [record["propertyKey"] for record in prop_result]
 
+            logger.info(f"Retrieved metadata: {len(labels)} labels, {len(relationships)} relationship types, {len(properties)} property keys")
             return {
                 "labels": labels,
                 "relationship_types": relationships,
@@ -65,6 +81,7 @@ class Neo4jDatabase:
 
     def get_schema(self) -> str:
         """Get the database schema information"""
+        logger.info("Building database schema information")
         metadata = self.get_metadata()
 
         schema_info = "Database Schema:\n"
@@ -94,7 +111,8 @@ class Neo4jDatabase:
                     schema_info += (
                         f"Relationship '{rel_type}' properties: {dict(rel.items())}\n"
                     )
-
+            
+            logger.info("Database schema information built successfully")
             return schema_info
 
     def execute_query(
@@ -102,6 +120,7 @@ class Neo4jDatabase:
     ) -> Tuple[List[Dict[str, Any]], Optional[str]]:
         """Execute a Cypher query and return the results and error if any"""
         params = params or {}
+        logger.info(f"Executing Cypher query: {cypher_query[:100]}...")
         with self.driver.session() as session:
             try:
                 result = session.run(cypher_query, **params)
@@ -112,9 +131,10 @@ class Neo4jDatabase:
                     }
                     for record in result
                 ]
+                logger.info(f"Query executed successfully, returned {len(records)} records")
                 return records, None  # Return results and no error
             except Exception as e:
-                print(f"Error executing query: {e}")
+                logger.error(f"Error executing query: {e}")
                 # Return empty results and the error message
                 return [], str(e)
 
@@ -132,6 +152,7 @@ class Neo4jDatabase:
 
     def expand_entity(self, entity_name: str) -> Dict:
         """Get entities related to the specified entity and their relationships"""
+        logger.info(f"Expanding entity: {entity_name}")
         # Query to get all direct relationships
         cypher_query = """
         MATCH (center)-[r]-(related)
@@ -205,11 +226,12 @@ class Neo4jDatabase:
                         "label": rel_type,
                         "properties": dict(rel),
                     })
-
+                
+                logger.info(f"Entity expansion complete: found {len(nodes)} nodes and {len(edges)} edges")
                 return {"nodes": list(nodes.values()), "edges": edges}
 
             except Exception as e:
-                print(f"Error expanding entity: {e}")
+                logger.error(f"Error expanding entity: {e}")
                 return {"nodes": [], "edges": []}
 
 
@@ -220,6 +242,7 @@ class QueryProcessor:
         self.db = db
         self.schema_info = schema_info
         self.db_metadata = db_metadata
+        logger.info("QueryProcessor initialized")
     
     def process_query(self, question: str) -> Dict[str, Any]:
         """
@@ -230,20 +253,60 @@ class QueryProcessor:
         4. Aggregating results
         5. Generating a comprehensive answer
         """
+        logger.info(f"Processing query: {question}")
         # First, analyze the query to determine if it's complex
         query_analysis = self._analyze_query_complexity(question)
         
         if query_analysis["is_complex"]:
-            print(f"Complex query detected. Complexity score: {query_analysis['complexity_score']}")
+            logger.info(f"Complex query detected. Complexity score: {query_analysis['complexity_score']}")
             return self._handle_complex_query(question, query_analysis)
         else:
-            print("Simple query detected, using standard processing")
+            logger.info("Simple query detected, using standard processing")
             return self._handle_simple_query(question)
     
+    def _extract_content_from_llama_response(self, response_data: Dict[str, Any]) -> Optional[str]:
+        """Helper function to extract content from various Llama API response formats"""
+        
+        # Format 1: Standard OpenAI-like format
+        if "choices" in response_data and len(response_data["choices"]) > 0:
+            content = response_data["choices"][0]["message"]["content"]
+            logger.debug(f"Extracted content from 'choices' format: {content[:100]}...")
+            return content
+        
+        # Format 2: Llama-specific format
+        if "completion_message" in response_data and "content" in response_data["completion_message"]:
+            # Handle different content types
+            content_obj = response_data["completion_message"]["content"]
+            
+            if isinstance(content_obj, dict):
+                if "text" in content_obj:
+                    logger.debug(f"Extracted content from 'completion_message.content.text' format: {content_obj['text'][:100]}...")
+                    return content_obj["text"]
+                elif "type" in content_obj and content_obj["type"] == "text":
+                    logger.debug(f"Extracted content from 'completion_message.content' with type 'text': {content_obj['text'][:100]}...")
+                    return content_obj["text"]
+            elif isinstance(content_obj, str):
+                logger.debug(f"Extracted string content from 'completion_message.content': {content_obj[:100]}...")
+                return content_obj
+        
+        logger.warning(f"Could not extract content from response with keys: {list(response_data.keys())}")
+        return None
+    
     def _analyze_query_complexity(self, question: str) -> Dict[str, Any]:
-        """Analyze the complexity of a query using LLM"""
-        prompt = f"""### SYSTEM
-You are a query complexity analyzer for a Neo4j graph database of podcast data. 
+        """Analyze the complexity of a query using LLM with structured output"""
+        logger.info(f"Analyzing complexity of query: {question}")
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {LLAMA_API_KEY}",
+        }
+
+        data = {
+            "model": "Llama-4-Maverick-17B-128E-Instruct-FP8",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": f"""You are a query complexity analyzer for a Neo4j graph database of podcast data. 
 Your task is to analyze the complexity of user questions and determine if they require:
 1. Multiple relationship traversals
 2. Aggregations (count, sum, avg, etc.)
@@ -251,65 +314,112 @@ Your task is to analyze the complexity of user questions and determine if they r
 4. Complex filtering conditions
 5. Pattern matching across multiple entity types
 
-Rate the complexity on a scale of 1-10 and provide a detailed breakdown.
-
-### USER
-Analyze the complexity of this question: "{question}"
-
-Return your analysis in JSON format with the following structure:
-```json
-{{
-  "is_complex": true/false,
-  "complexity_score": 1-10,
-  "requires_multiple_traversals": true/false,
-  "requires_aggregation": true/false,
-  "requires_ordering": true/false,
-  "requires_complex_filtering": true/false,
-  "sub_queries": [
-    "What are the entities mentioned?",
-    "How are these entities related?",
-    "What metrics need to be calculated?"
-  ]
-}}
-```
-"""
-
-        response = self._call_llm_api(prompt)
-        
-        # Extract JSON from the response
-        json_match = re.search(r'```json\s*(.*?)\s*```', response, re.DOTALL)
-        if json_match:
-            json_str = json_match.group(1)
-            try:
-                return json.loads(json_str)
-            except json.JSONDecodeError:
-                print(f"Failed to parse JSON from: {json_str}")
-        
-        # Try to find JSON without code blocks
-        json_match = re.search(r'({.*})', response, re.DOTALL)
-        if json_match:
-            json_str = json_match.group(1)
-            try:
-                return json.loads(json_str)
-            except json.JSONDecodeError:
-                print(f"Failed to parse JSON from: {json_str}")
-        
-        # Fallback to a simple analysis
-        return {
-            "is_complex": False,
-            "complexity_score": 3,
-            "requires_multiple_traversals": False,
-            "requires_aggregation": False,
-            "requires_ordering": False,
-            "requires_complex_filtering": False,
-            "sub_queries": []
+Rate the complexity on a scale of 1-10 and analyze the following question: "{question}" """
+                },
+                {
+                    "role": "user",
+                    "content": question
+                }
+            ],
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "is_complex": {
+                                "type": "boolean"
+                            },
+                            "complexity_score": {
+                                "type": "integer"
+                            },
+                            "requires_multiple_traversals": {
+                                "type": "boolean"
+                            },
+                            "requires_aggregation": {
+                                "type": "boolean"
+                            },
+                            "requires_ordering": {
+                                "type": "boolean"
+                            },
+                            "requires_complex_filtering": {
+                                "type": "boolean"
+                            },
+                            "sub_queries": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "required": ["is_complex", "complexity_score"]
+                    }
+                }
+            }
         }
+
+        try:
+            logger.info("Sending query complexity analysis request to Llama API")
+            response = requests.post(LLAMA_API_URL, headers=headers, json=data)
+            
+            if response.status_code != 200:
+                logger.error(f"Error from Llama API: Status {response.status_code}, Response: {response.text}")
+                # Fall back to a simple analysis if API call fails
+                return {
+                    "is_complex": False,
+                    "complexity_score": 3,
+                    "requires_multiple_traversals": False,
+                    "requires_aggregation": False,
+                    "requires_ordering": False,
+                    "requires_complex_filtering": False,
+                    "sub_queries": []
+                }
+            
+            response_data = response.json()
+            logger.debug(f"Response structure: {list(response_data.keys())}")
+            
+            content = self._extract_content_from_llama_response(response_data)
+            
+            if content:
+                try:
+                    logger.debug(f"Parsing content: {content}")
+                    parsed_content = json.loads(content)
+                    logger.info(f"Successfully parsed query complexity analysis: {parsed_content}")
+                    return parsed_content
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse JSON response: {e}, content: {content}")
+            else:
+                logger.warning(f"Could not extract content from response: {response_data}")
+
+            # Fallback to a simple analysis
+            return {
+                "is_complex": False,
+                "complexity_score": 3,
+                "requires_multiple_traversals": False,
+                "requires_aggregation": False,
+                "requires_ordering": False,
+                "requires_complex_filtering": False,
+                "sub_queries": []
+            }
+        except Exception as e:
+            logger.error(f"Error analyzing query complexity: {e}", exc_info=True)
+            return {
+                "is_complex": False,
+                "complexity_score": 3,
+                "requires_multiple_traversals": False,
+                "requires_aggregation": False,
+                "requires_ordering": False,
+                "requires_complex_filtering": False,
+                "sub_queries": []
+            }
     
     def _handle_complex_query(self, question: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
         """Handle a complex query through decomposition and aggregation"""
+        logger.info(f"Handling complex query: {question}")
         # Step 1: Generate sub-queries if not provided in analysis
         sub_queries = analysis.get("sub_queries", [])
         if not sub_queries:
+            logger.info("Generating sub-queries")
             sub_queries = self._generate_sub_queries(question, analysis)
         
         # Step 2: Process each sub-query
@@ -322,7 +432,7 @@ Return your analysis in JSON format with the following structure:
         edge_ids_set = set()
         
         for i, sub_query in enumerate(sub_queries):
-            print(f"Processing sub-query {i+1}/{len(sub_queries)}: {sub_query}")
+            logger.info(f"Processing sub-query {i+1}/{len(sub_queries)}: {sub_query}")
             
             # Generate and execute Cypher for this sub-query
             cypher_query = get_cypher_from_question(sub_query, self.schema_info, self.db_metadata)
@@ -340,6 +450,7 @@ Return your analysis in JSON format with the following structure:
             all_results.extend(results)
             if error:
                 errors.append(error)
+                logger.warning(f"Error in sub-query {i+1}: {error}")
             
             # Add to combined graph data
             graph_data = process_results_for_visualization(results)
@@ -360,8 +471,10 @@ Return your analysis in JSON format with the following structure:
         final_cypher = "\n\n--- Sub-queries ---\n" + "\n\n".join(all_cypher_queries)
         
         # Step 4: Generate a comprehensive answer
+        logger.info("Generating comprehensive answer")
         answer = self._generate_aggregated_answer(question, sub_results)
         
+        logger.info(f"Complex query processing complete. Generated answer length: {len(answer)}")
         return {
             "question": question,
             "cypher_query": final_cypher,
@@ -375,6 +488,7 @@ Return your analysis in JSON format with the following structure:
     
     def _handle_simple_query(self, question: str) -> Dict[str, Any]:
         """Handle a simple query through direct execution with adaptive exploration"""
+        logger.info(f"Handling simple query: {question}")
         # Generate Cypher query
         cypher_query = get_cypher_from_question(question, self.schema_info, self.db_metadata)
         
@@ -383,16 +497,19 @@ Return your analysis in JSON format with the following structure:
         
         # Try once more with error feedback if needed
         if error:
+            logger.info(f"Initial query failed with error: {error}. Retrying with error feedback.")
             cypher_query = get_cypher_from_question(question, self.schema_info, self.db_metadata, error)
             results, error = self.db.execute_query(cypher_query)
         
         # NEW: Dynamic exploration only if needed (null values, limited results, or errors)
         if error or not results or self._needs_exploration(results):
+            logger.info("Results need additional exploration. Performing dynamic exploration.")
             enhanced_data = self._perform_dynamic_exploration(question, results, error)
         else:
             enhanced_data = None
         
         # Generate answer with all available data
+        logger.info("Generating answer")
         answer = generate_answer(question, results, error, enhanced_data)
         
         # Process results for visualization
@@ -400,8 +517,10 @@ Return your analysis in JSON format with the following structure:
         
         # Add enhanced exploration data to graph visualization if available
         if enhanced_data and enhanced_data.get("exploration_results"):
+            logger.info("Merging exploration results into graph data")
             graph_data = self._merge_graph_data(graph_data, enhanced_data.get("exploration_results", []))
         
+        logger.info(f"Simple query processing complete. Generated answer length: {len(answer)}")
         return {
             "question": question,
             "cypher_query": cypher_query,
@@ -416,6 +535,7 @@ Return your analysis in JSON format with the following structure:
     def _needs_exploration(self, results: List[Dict[str, Any]]) -> bool:
         """Determine if results need additional exploration"""
         if not results or len(results) < 3:
+            logger.info("Few or no results, exploration needed")
             return True
             
         # Check for null values in key fields
@@ -429,7 +549,9 @@ Return your analysis in JSON format with the following structure:
                     null_values += 1
         
         # If more than 30% of fields are null, exploration is needed
-        return (null_values / total_fields) > 0.3 if total_fields > 0 else True
+        null_percentage = (null_values / total_fields) if total_fields > 0 else 0
+        logger.info(f"Result quality check: {null_values}/{total_fields} null fields ({null_percentage:.2%})")
+        return null_percentage > 0.3
     
     def _perform_dynamic_exploration(self, question: str, initial_results: List[Dict[str, Any]], 
                                     error: Optional[str]) -> Dict[str, Any]:
@@ -437,6 +559,7 @@ Return your analysis in JSON format with the following structure:
         Use LLM to dynamically plan and execute an exploration strategy
         based on the question and initial results
         """
+        logger.info(f"Performing dynamic exploration for: {question}")
         # Format initial results
         results_str = json.dumps(initial_results[:5], indent=2) if initial_results else "No results"
         if len(results_str) > 1000:
@@ -452,9 +575,11 @@ Return your analysis in JSON format with the following structure:
         """
         
         # Use LLM to create an exploration plan
+        logger.info("Generating exploration plan")
         exploration_plan = self._generate_exploration_plan(question, results_str, error_str, schema_context)
         
         # Execute the exploration plan
+        logger.info(f"Executing exploration plan with {len(exploration_plan)} steps")
         exploration_results = self._execute_exploration_plan(exploration_plan)
         
         return {
@@ -464,9 +589,10 @@ Return your analysis in JSON format with the following structure:
     
     def _generate_exploration_plan(self, question: str, results_str: str, 
                                  error_str: str, schema_context: str) -> List[Dict[str, Any]]:
-        """Generate a dynamic exploration plan using LLM"""
-        prompt = f"""### SYSTEM
-You are an expert Neo4j graph database explorer. Your task is to create a dynamic exploration plan
+        """Generate a dynamic exploration plan using LLM with structured output"""
+        logger.info(f"Generating exploration plan for: {question}")
+        
+        system_content = f"""You are an expert Neo4j graph database explorer. Your task is to create a dynamic exploration plan
 to answer a user's question when the initial query results are insufficient or contain NULL values.
 
 Question: "{question}"
@@ -485,51 +611,89 @@ Create an exploration plan with 2-5 Cypher queries that will:
 3. Find alternative paths that might answer the question
 4. Look for related information that fills in missing data
 
-The exploration should be adaptive - if we don't find data one way, try another approach.
+The exploration should be adaptive - if we don't find data one way, try another approach."""
 
-Return the plan as a JSON array of exploration steps, each with:
-1. A description of what we're trying to find
-2. A complete Cypher query to execute
-3. What to do with the results
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {LLAMA_API_KEY}",
+        }
 
-Example format:
-```json
-[
-  {{
-    "description": "Find entities mentioned in the question",
-    "query": "MATCH (e:Entity) WHERE e.name IN ['Entity1', 'Entity2'] RETURN e",
-    "purpose": "Identify key entities to explore further"
-  }},
-  {{
-    "description": "Explore relationships of these entities",
-    "query": "MATCH (e:Entity)-[r]-(related) WHERE e.name IN ['Entity1', 'Entity2'] RETURN type(r) as relationship, labels(related) as related_labels, count(*) as count",
-    "purpose": "Discover available connections"
-  }}
-]
-```
+        data = {
+            "model": "Llama-4-Maverick-17B-128E-Instruct-FP8",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": system_content
+                },
+                {
+                    "role": "user",
+                    "content": f"Create an exploration plan for: {question}"
+                }
+            ],
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "exploration_plan": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "description": {
+                                            "type": "string",
+                                            "description": "Description of what we're trying to find"
+                                        },
+                                        "query": {
+                                            "type": "string",
+                                            "description": "A complete Cypher query to execute"
+                                        },
+                                        "purpose": {
+                                            "type": "string",
+                                            "description": "What to do with the results"
+                                        }
+                                    },
+                                    "required": ["description", "query", "purpose"]
+                                }
+                            }
+                        },
+                        "required": ["exploration_plan"]
+                    }
+                }
+            }
+        }
 
-IMPORTANT: Only include valid Cypher queries that use the actual node labels and relationship types listed above.
-"""
-
-        response = self._call_llm_api(prompt)
-        
-        # Extract JSON array from response
-        json_match = re.search(r'```(?:json)?\s*(\[.*?\])\s*```', response, re.DOTALL)
-        if not json_match:
-            json_match = re.search(r'(\[.*?\])', response, re.DOTALL)
+        try:
+            logger.info("Sending exploration plan request to Llama API")
+            response = requests.post(LLAMA_API_URL, headers=headers, json=data)
             
-        if json_match:
-            try:
-                exploration_plan = json.loads(json_match.group(1))
-                return exploration_plan
-            except json.JSONDecodeError as e:
-                print(f"Error parsing exploration plan JSON: {e}")
-        
-        # Fallback: create a basic exploration plan
-        return self._create_fallback_exploration_plan(question)
+            if response.status_code != 200:
+                logger.error(f"Error from Llama API: Status {response.status_code}, Response: {response.text}")
+                return self._create_fallback_exploration_plan(question)
+                
+            response_data = response.json()
+            content = self._extract_content_from_llama_response(response_data)
+
+            if content:
+                try:
+                    parsed_content = json.loads(content)
+                    if "exploration_plan" in parsed_content:
+                        logger.info(f"Successfully generated exploration plan with {len(parsed_content['exploration_plan'])} steps")
+                        return parsed_content["exploration_plan"]
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse JSON response: {e}, content: {content}")
+
+            # Fallback
+            logger.warning("Using fallback exploration plan")
+            return self._create_fallback_exploration_plan(question)
+        except Exception as e:
+            logger.error(f"Error generating exploration plan: {e}", exc_info=True)
+            return self._create_fallback_exploration_plan(question)
     
     def _create_fallback_exploration_plan(self, question: str) -> List[Dict[str, Any]]:
         """Create a simple fallback exploration plan when LLM plan generation fails"""
+        logger.info(f"Creating fallback exploration plan for: {question}")
         # Extract potential entities from question (simple approach)
         entity_terms = re.findall(r'\b[A-Z][a-z]+\b', question)
         entity_terms.extend(re.findall(r'"([^"]+)"', question))
@@ -537,6 +701,8 @@ IMPORTANT: Only include valid Cypher queries that use the actual node labels and
         # If no entities found, use all words longer than 4 characters
         if not entity_terms:
             entity_terms = [word for word in question.split() if len(word) > 4]
+        
+        logger.info(f"Extracted terms for exploration: {entity_terms}")
         
         # Create LIKE patterns for each term
         entity_patterns = " OR ".join([f"toLower(e.name) CONTAINS toLower('{term}')" for term in entity_terms])
@@ -568,23 +734,27 @@ IMPORTANT: Only include valid Cypher queries that use the actual node labels and
     
     def _execute_exploration_plan(self, exploration_plan: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Execute each step in the exploration plan and gather results"""
+        logger.info(f"Executing exploration plan with {len(exploration_plan)} steps")
         exploration_results = []
         
-        for step in exploration_plan:
+        for i, step in enumerate(exploration_plan):
             description = step.get("description", "Exploration step")
             query = step.get("query", "")
             purpose = step.get("purpose", "")
             
-            print(f"Executing exploration step: {description}")
+            logger.info(f"Executing exploration step {i+1}: {description}")
             
             if not query:
+                logger.warning(f"Skipping step {i+1} with empty query")
                 continue
                 
-            # Clean the query to ensure it's valid
-            query = clean_cypher_query(query)
-            
             # Execute the query
             results, error = self.db.execute_query(query)
+            
+            if error:
+                logger.warning(f"Error in exploration step {i+1}: {error}")
+            else:
+                logger.info(f"Step {i+1} returned {len(results)} results")
             
             # Process the step results
             step_result = {
@@ -600,22 +770,32 @@ IMPORTANT: Only include valid Cypher queries that use the actual node labels and
             
             # If this step had an error, add an additional recovery step
             if error:
+                logger.info(f"Generating recovery step for failed exploration step {i+1}")
                 recovery_step = self._generate_recovery_step(step, error)
                 if recovery_step:
                     recovery_query = recovery_step.get("query", "")
                     if recovery_query:
+                        logger.info(f"Executing recovery step: {recovery_step.get('description', 'Recovery')}")
                         recovery_results, recovery_error = self.db.execute_query(recovery_query)
                         recovery_step["results"] = recovery_results
                         recovery_step["error"] = recovery_error
                         recovery_step["graph_data"] = process_results_for_visualization(recovery_results)
+                        
+                        if recovery_error:
+                            logger.warning(f"Recovery step failed with error: {recovery_error}")
+                        else:
+                            logger.info(f"Recovery step returned {len(recovery_results)} results")
+                            
                         exploration_results.append(recovery_step)
         
+        logger.info(f"Exploration plan execution complete with {len(exploration_results)} steps (including recovery steps)")
         return exploration_results
     
     def _generate_recovery_step(self, failed_step: Dict[str, Any], error: str) -> Optional[Dict[str, Any]]:
-        """Generate a recovery step when an exploration step fails"""
-        prompt = f"""### SYSTEM
-You are a Neo4j Cypher query debugging expert. An exploration query has failed with an error.
+        """Generate a recovery step when an exploration step fails using structured output"""
+        logger.info(f"Generating recovery step for failed step: {failed_step.get('description')}")
+        
+        system_content = f"""You are a Neo4j Cypher query debugging expert. An exploration query has failed with an error.
 Fix the query to make it work with the database schema.
 
 Original query description: {failed_step.get('description', 'Exploration step')}
@@ -625,42 +805,90 @@ Error: {error}
 Available node labels: {', '.join(self.db_metadata['labels'])}
 Available relationship types: {', '.join(self.db_metadata['relationship_types'])}
 
-Create a fixed version of this query that avoids the error and achieves a similar purpose.
-Return ONLY a JSON object with the fixed query:
+Create a fixed version of this query that avoids the error and achieves a similar purpose."""
 
-```json
-{{
-  "description": "Fixed: [original description]",
-  "query": "[fixed cypher query]",
-  "purpose": "Same as original but avoiding the error"
-}}
-```
-"""
-
-        response = self._call_llm_api(prompt)
-        
-        # Extract JSON from response
-        json_match = re.search(r'```(?:json)?\s*({.*?})\s*```', response, re.DOTALL)
-        if not json_match:
-            json_match = re.search(r'({.*?})', response, re.DOTALL)
-            
-        if json_match:
-            try:
-                recovery_step = json.loads(json_match.group(1))
-                return recovery_step
-            except json.JSONDecodeError:
-                pass
-        
-        # Fallback: create a simple recovery step
-        return {
-            "description": f"Fallback for: {failed_step.get('description', 'Failed step')}",
-            "query": "MATCH (n) RETURN labels(n) as node_types, count(*) as count GROUP BY node_types LIMIT 10",
-            "purpose": "Get database overview after original query failed"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {LLAMA_API_KEY}",
         }
+
+        data = {
+            "model": "Llama-4-Maverick-17B-128E-Instruct-FP8",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": system_content
+                },
+                {
+                    "role": "user",
+                    "content": f"Fix this query: {failed_step.get('query', '')}"
+                }
+            ],
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "description": {
+                                "type": "string",
+                                "description": "Description of the fixed query"
+                            },
+                            "query": {
+                                "type": "string",
+                                "description": "The fixed Cypher query"
+                            },
+                            "purpose": {
+                                "type": "string",
+                                "description": "Purpose of the query"
+                            }
+                        },
+                        "required": ["description", "query", "purpose"]
+                    }
+                }
+            }
+        }
+
+        try:
+            logger.info("Sending recovery step request to Llama API")
+            response = requests.post(LLAMA_API_URL, headers=headers, json=data)
+            
+            if response.status_code != 200:
+                logger.error(f"Error from Llama API: Status {response.status_code}, Response: {response.text}")
+                # Fall back to a simple recovery step
+                return {
+                    "description": f"Fallback for: {failed_step.get('description', 'Failed step')}",
+                    "query": "MATCH (n) RETURN labels(n) as node_types, count(*) as count GROUP BY node_types LIMIT 10",
+                    "purpose": "Get database overview after original query failed"
+                }
+                
+            response_data = response.json()
+            content = self._extract_content_from_llama_response(response_data)
+
+            if content:
+                try:
+                    parsed_content = json.loads(content)
+                    if all(k in parsed_content for k in ["description", "query", "purpose"]):
+                        logger.info(f"Successfully generated recovery step: {parsed_content['description']}")
+                        return parsed_content
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse JSON response: {e}, content: {content}")
+
+            # Fallback
+            logger.warning("Using fallback recovery step")
+            return {
+                "description": f"Fallback for: {failed_step.get('description', 'Failed step')}",
+                "query": "MATCH (n) RETURN labels(n) as node_types, count(*) as count GROUP BY node_types LIMIT 10",
+                "purpose": "Get database overview after original query failed"
+            }
+        except Exception as e:
+            logger.error(f"Error generating recovery step: {e}", exc_info=True)
+            return None
     
     def _merge_graph_data(self, primary_graph: Dict[str, Any], 
                          exploration_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Merge graph visualization data from multiple exploration steps"""
+        logger.info("Merging graph data from exploration results")
         # Track existing nodes and edges to avoid duplicates
         node_ids = {node["id"] for node in primary_graph["nodes"]}
         edge_ids = {edge["id"] for edge in primary_graph["edges"]}
@@ -670,6 +898,9 @@ Return ONLY a JSON object with the fixed query:
             "nodes": primary_graph["nodes"].copy(),
             "edges": primary_graph["edges"].copy()
         }
+        
+        nodes_added = 0
+        edges_added = 0
         
         # Add nodes and edges from each exploration step
         for step in exploration_results:
@@ -683,6 +914,7 @@ Return ONLY a JSON object with the fixed query:
                     node["explorationDescription"] = step.get("description", "Exploration")
                     combined_graph["nodes"].append(node)
                     node_ids.add(node["id"])
+                    nodes_added += 1
             
             # Add new edges
             for edge in graph_data.get("edges", []):
@@ -692,13 +924,16 @@ Return ONLY a JSON object with the fixed query:
                     edge["explorationDescription"] = step.get("description", "Exploration")
                     combined_graph["edges"].append(edge)
                     edge_ids.add(edge["id"])
+                    edges_added += 1
         
+        logger.info(f"Merged graph data: added {nodes_added} nodes and {edges_added} edges from exploration results")
         return combined_graph
     
     def _generate_sub_queries(self, question: str, analysis: Dict[str, Any]) -> List[str]:
-        """Generate sub-queries for a complex question"""
-        prompt = f"""### SYSTEM
-You are a query decomposition expert for a Neo4j graph database of podcast data.
+        """Generate sub-queries for a complex question using structured output"""
+        logger.info(f"Generating sub-queries for: {question}")
+        
+        system_content = f"""You are a query decomposition expert for a Neo4j graph database of podcast data.
 Your task is to break down complex questions into simpler sub-queries that can be executed independently.
 
 Original question: "{question}"
@@ -711,45 +946,88 @@ Complexity analysis:
 - Complexity score: {analysis.get('complexity_score', 5)}/10
 
 Break this question down into 2-5 simpler sub-queries that can be executed independently.
-Each sub-query should focus on a specific aspect and be executable as a standalone query.
+Each sub-query should focus on a specific aspect and be executable as a standalone query."""
 
-Return ONLY a JSON array of sub-query strings.
-"""
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {LLAMA_API_KEY}",
+        }
 
-        response = self._call_llm_api(prompt)
-        
-        # Extract JSON array from response
-        json_match = re.search(r'(\[.*?\])', response, re.DOTALL)
-        if json_match:
-            json_str = json_match.group(1)
-            try:
-                return json.loads(json_str)
-            except json.JSONDecodeError:
-                print(f"Failed to parse JSON array from: {json_str}")
-        
-        # Fallback to manually parsing the sub-queries
-        sub_queries = []
-        for line in response.split('\n'):
-            line = line.strip()
-            if line and not line.startswith('[') and not line.startswith(']'):
-                # Remove numbers, quotes and leading dashes if present
-                clean_line = re.sub(r'^[0-9."]*-?\s*', '', line)
-                clean_line = clean_line.strip('"\'')
-                if clean_line:
-                    sub_queries.append(clean_line)
-        
-        # If still empty, create some basic sub-queries
-        if not sub_queries:
+        data = {
+            "model": "Llama-4-Maverick-17B-128E-Instruct-FP8",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": system_content
+                },
+                {
+                    "role": "user",
+                    "content": f"Break down this question into sub-queries: {question}"
+                }
+            ],
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "sub_queries": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "A list of 2-5 sub-queries that can be executed independently"
+                            }
+                        },
+                        "required": ["sub_queries"]
+                    }
+                }
+            }
+        }
+
+        try:
+            logger.info("Sending sub-query generation request to Llama API")
+            response = requests.post(LLAMA_API_URL, headers=headers, json=data)
+            
+            if response.status_code != 200:
+                logger.error(f"Error from Llama API: Status {response.status_code}, Response: {response.text}")
+                # Fall back to default sub-queries
+                return [
+                    f"What entities are mentioned in: {question}",
+                    f"What relationships exist between entities in: {question}",
+                    f"What are the key properties of entities in: {question}"
+                ]
+                
+            response_data = response.json()
+            content = self._extract_content_from_llama_response(response_data)
+
+            if content:
+                try:
+                    parsed_content = json.loads(content)
+                    if "sub_queries" in parsed_content and isinstance(parsed_content["sub_queries"], list):
+                        logger.info(f"Successfully generated {len(parsed_content['sub_queries'])} sub-queries")
+                        return parsed_content["sub_queries"]
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse JSON response: {e}, content: {content}")
+
+            # Fallback to basic sub-queries if parsing fails
+            logger.warning("Using fallback sub-queries")
             return [
                 f"What entities are mentioned in: {question}",
                 f"What relationships exist between entities in: {question}",
                 f"What are the key properties of entities in: {question}"
             ]
-        
-        return sub_queries
+        except Exception as e:
+            logger.error(f"Error generating sub-queries: {e}", exc_info=True)
+            return [
+                f"What entities are mentioned in: {question}",
+                f"What relationships exist between entities in: {question}",
+                f"What are the key properties of entities in: {question}"
+            ]
     
     def _generate_aggregated_answer(self, question: str, sub_results: List[Dict[str, Any]]) -> str:
         """Generate a comprehensive answer by aggregating sub-query results"""
+        logger.info(f"Generating aggregated answer for: {question}")
         # Format sub-results for the prompt
         formatted_results = ""
         for i, result in enumerate(sub_results):
@@ -787,6 +1065,7 @@ Please provide a comprehensive answer to: "{question}"
     
     def _call_llm_api(self, prompt: str) -> str:
         """Make a call to the LLama API"""
+        logger.info("Calling Llama API for text generation")
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {LLAMA_API_KEY}",
@@ -802,25 +1081,22 @@ Please provide a comprehensive answer to: "{question}"
             response.raise_for_status()
             response_data = response.json()
 
-            # Fixed response parsing to match Llama API format
-            if "choices" in response_data and len(response_data["choices"]) > 0:
-                return response_data["choices"][0]["message"]["content"]
-            
-            # Fallback to old format in case API changes
-            if (
-                "completion_message" in response_data
-                and "content" in response_data["completion_message"]
-            ):
-                return response_data["completion_message"]["content"]["text"]
+            # Extract content from response
+            content = self._extract_content_from_llama_response(response_data)
+            if content:
+                logger.info(f"Received response of length: {len(content)}")
+                return content
 
+            logger.warning("Could not extract content from Llama API response")
             return "I couldn't process this request. Please try again with a simpler question."
         except Exception as e:
-            print(f"Error calling Llama API: {e}")
+            logger.error(f"Error calling Llama API: {e}", exc_info=True)
             return f"Error processing request: {str(e)}"
 
 
 def generate_fallback_query(db_metadata) -> str:
     """Generate a simple but valid fallback query based on the database metadata"""
+    logger.info("Generating fallback query")
     # Try to find Entity label first
     if "Entity" in db_metadata["labels"]:
         entity_label = "Entity"
@@ -840,68 +1116,45 @@ def generate_fallback_query(db_metadata) -> str:
     else:
         rel_type = "RELATED_TO"
 
-    return f"""
+    fallback_query = f"""
     MATCH (e:{entity_label})-[r]->(m)
     RETURN e, r, m
     LIMIT 10
     """
-
-
-def clean_cypher_query(raw_query: str) -> str:
-    """Clean and extract a valid Cypher query from raw text"""
-    # Remove markdown code blocks
-    query = raw_query
-    if "```" in query:
-        # Extract content from code block
-        pattern = r"```(?:cypher)?(.*?)```"
-        matches = re.findall(pattern, query, re.DOTALL)
-        if matches:
-            query = matches[0]
-
-    # Remove explanatory text and comments
-    cleaned_lines = []
-    for line in query.strip().split("\n"):
-        line = line.strip()
-        # Skip empty lines or lines that are clearly explanations or comments
-        if (
-            not line
-            or line.startswith("Here")
-            or line.startswith("//")
-            or line.startswith("--")
-        ):
-            continue
-        if "corrected query" in line.lower() or "fixed query" in line.lower():
-            continue
-        cleaned_lines.append(line)
-
-    # Join the remaining lines
-    cleaned_query = "\n".join(cleaned_lines)
-
-    # Instead of truncating at first RETURN or LIMIT, ensure we keep the complete query
-    # This preserves ORDER BY clauses and other elements that might come after RETURN
     
-    # Look for semicolon to find the actual end of the query
-    if ";" in cleaned_query:
-        cleaned_query = cleaned_query.split(";")[0] + ";"
-    
-    # Remove trailing semicolons and whitespace
-    cleaned_query = cleaned_query.rstrip(";").strip()
-
-    return cleaned_query
+    logger.info(f"Generated fallback query: {fallback_query}")
+    return fallback_query
 
 
 def get_cypher_from_question(
     question: str, schema_info: str, db_metadata: dict, error_message: str = None
 ) -> str:
-    """Generate a Cypher query from a natural language question using Llama"""
+    """Generate a Cypher query from a natural language question using Llama with structured output"""
+    logger.info(f"Generating Cypher query for: {question}")
+    if error_message:
+        logger.info(f"Previous error: {error_message}")
 
-    # Create a more specific prompt for complex features
-    base_prompt = f"""### SYSTEM
-You are a Neo4j Cypher query generation expert. Your job is to convert natural language questions 
+    # Create prompt based on whether we're handling an error
+    if error_message:
+        system_content = f"""You are a Neo4j Cypher query debugging expert. A previous query attempt failed with the following error:
+
+ERROR: {error_message}
+
+Please fix the query to make it syntactically correct and executable in Neo4j. Pay close attention to:
+1. Only use node labels that exist in the database: {', '.join(db_metadata['labels'])}
+2. Only use relationship types that exist in the database: {', '.join(db_metadata['relationship_types'])}
+3. Make sure all variables used in the RETURN clause are defined in the MATCH pattern
+4. Ensure proper relationship direction in MATCH patterns
+5. Use single quotes for string literals
+6. For complex queries, ensure all aggregations are properly defined and grouped
+
+Generate a working Cypher query to answer this question: {question}"""
+    else:
+        system_content = f"""You are a Neo4j Cypher query generation expert. Your job is to convert natural language questions 
 about podcast data into precise Cypher queries.
 
 Here is the database schema information:
-{schema_info}
+{schema_info[:1000]}  # Truncate to avoid token limits
 
 Available node labels: {', '.join(db_metadata['labels'])}
 Available relationship types: {', '.join(db_metadata['relationship_types'])}
@@ -916,36 +1169,7 @@ Generate a Cypher query that would answer the user's question. Your query should
 4. Filtering: Use WHERE clauses with complex conditions when needed
 5. Return complete paths: Use relationship variables and return full nodes
 
-IMPORTANT: Return ONLY the Cypher query itself, with no additional explanation, comments, or text before or after.
-DO NOT include any markdown formatting.
-
-### USER
-{question}
-"""
-
-    # If we have an error message, create a correction prompt
-    if error_message:
-        prompt = f"""### SYSTEM
-You are a Neo4j Cypher query debugging expert. A previous query attempt failed with the following error:
-
-ERROR: {error_message}
-
-Please fix the query to make it syntactically correct and executable in Neo4j. Pay close attention to:
-1. Only use node labels that exist in the database: {', '.join(db_metadata['labels'])}
-2. Only use relationship types that exist in the database: {', '.join(db_metadata['relationship_types'])}
-3. Make sure all variables used in the RETURN clause are defined in the MATCH pattern
-4. Ensure proper relationship direction in MATCH patterns
-5. Use single quotes for string literals
-6. For complex queries, ensure all aggregations are properly defined and grouped
-
-IMPORTANT: Return ONLY the fixed Cypher query itself, with NO explanation or commentary.
-Simply output the exact query that should be executed.
-
-### USER
-Generate a working Cypher query to answer this question: {question}
-"""
-    else:
-        prompt = base_prompt
+The question is: {question}"""
 
     headers = {
         "Content-Type": "application/json",
@@ -954,39 +1178,84 @@ Generate a working Cypher query to answer this question: {question}
 
     data = {
         "model": "Llama-4-Maverick-17B-128E-Instruct-FP8",
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": [
+            {
+                "role": "system",
+                "content": system_content
+            },
+            {
+                "role": "user",
+                "content": f"Generate a Cypher query for: {question}"
+            }
+        ],
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "cypher_query": {
+                            "type": "string",
+                            "description": "A valid executable Neo4j Cypher query"
+                        }
+                    },
+                    "required": ["cypher_query"]
+                }
+            }
+        }
     }
 
     try:
+        logger.info("Sending Cypher generation request to Llama API")
         response = requests.post(LLAMA_API_URL, headers=headers, json=data)
-        response.raise_for_status()
+        
+        if response.status_code != 200:
+            logger.error(f"Error from Llama API: Status {response.status_code}, Response: {response.text}")
+            return generate_fallback_query(db_metadata)
+        
         response_data = response.json()
-
-        # Fixed to use the correct response format
+        logger.debug(f"Response keys: {list(response_data.keys())}")
+        
+        # Extract content from different response formats
         content = None
+        
+        # Format 1: Standard OpenAI-like format
         if "choices" in response_data and len(response_data["choices"]) > 0:
             content = response_data["choices"][0]["message"]["content"]
-        elif (
-            "completion_message" in response_data
-            and "content" in response_data["completion_message"]
-        ):
-            content = response_data["completion_message"]["content"]["text"]
+            logger.debug(f"Extracted content from 'choices' format: {content[:100]}...")
+        
+        # Format 2: Llama-specific format
+        elif "completion_message" in response_data and "content" in response_data["completion_message"]:
+            # Handle different content types
+            content_obj = response_data["completion_message"]["content"]
             
+            if isinstance(content_obj, dict):
+                if "text" in content_obj:
+                    content = content_obj["text"]
+                    logger.debug(f"Extracted content from 'completion_message.content.text': {content[:100]}...")
+                elif "type" in content_obj and content_obj["type"] == "text":
+                    content = content_obj["text"]
+                    logger.debug(f"Extracted content from 'completion_message.content' with type 'text': {content[:100]}...")
+            elif isinstance(content_obj, str):
+                content = content_obj
+                logger.debug(f"Extracted string content from 'completion_message.content': {content[:100]}...")
+
         if content:
-            # Clean and extract the actual Cypher query
-            cleaned_query = clean_cypher_query(content)
+            try:
+                parsed_content = json.loads(content)
+                if "cypher_query" in parsed_content:
+                    cypher_query = parsed_content["cypher_query"]
+                    logger.info(f"Successfully generated Cypher query: {cypher_query[:100]}...")
+                    return cypher_query
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON response: {e}, content: {content}")
 
-            # If the query is too short, it's probably incomplete or invalid
-            if len(cleaned_query) < 10:
-                # Fall back to a simple but likely valid query based on the schema
-                return generate_fallback_query(db_metadata)
-
-            return cleaned_query
-
-        return generate_fallback_query(db_metadata)  # Default fallback query
+        # If we couldn't get a structured response, fall back to a simple query
+        logger.warning("Using fallback query")
+        return generate_fallback_query(db_metadata)
     except Exception as e:
-        print(f"Error calling Llama API for query generation: {e}")
-        return generate_fallback_query(db_metadata)  # Default fallback query
+        logger.error(f"Error calling Llama API for query generation: {e}", exc_info=True)
+        return generate_fallback_query(db_metadata)
 
 
 def generate_answer(
@@ -996,6 +1265,7 @@ def generate_answer(
     enhanced_data: Optional[Dict[str, Any]] = None
 ) -> str:
     """Generate a natural language answer from query results using Llama"""
+    logger.info(f"Generating answer for: {question}")
     # Convert results to a readable format
     results_str = json.dumps(query_results, indent=2)
     
@@ -1007,10 +1277,12 @@ def generate_answer(
     error_context = ""
     if error:
         error_context = f"\nNote: The query encountered an error: {error}\n"
+        logger.info(f"Including error context in answer generation: {error}")
     
     # Format exploration results if available
     exploration_context = ""
     if enhanced_data and enhanced_data.get("exploration_results"):
+        logger.info("Including exploration results in answer generation")
         exploration_context = "\n### Additional Data from Graph Exploration:\n"
         
         for i, step in enumerate(enhanced_data["exploration_results"]):
@@ -1070,23 +1342,43 @@ Highlight any interesting relationships or connections discovered.
     }
 
     try:
+        logger.info("Sending answer generation request to Llama API")
         response = requests.post(LLAMA_API_URL, headers=headers, json=data)
         response.raise_for_status()
         response_data = response.json()
 
-        # Support both response formats
-        if "choices" in response_data and len(response_data["choices"]) > 0:
-            return response_data["choices"][0]["message"]["content"]
+        # Extract content from different response formats
+        content = None
         
-        if (
-            "completion_message" in response_data
-            and "content" in response_data["completion_message"]
-        ):
-            return response_data["completion_message"]["content"]["text"]
+        # Format 1: Standard OpenAI-like format
+        if "choices" in response_data and len(response_data["choices"]) > 0:
+            content = response_data["choices"][0]["message"]["content"]
+            logger.debug(f"Extracted answer from 'choices' format: {content[:100]}...")
+        
+        # Format 2: Llama-specific format
+        elif "completion_message" in response_data and "content" in response_data["completion_message"]:
+            # Handle different content types
+            content_obj = response_data["completion_message"]["content"]
+            
+            if isinstance(content_obj, dict):
+                if "text" in content_obj:
+                    content = content_obj["text"]
+                    logger.debug(f"Extracted answer from 'completion_message.content.text': {content[:100]}...")
+                elif "type" in content_obj and content_obj["type"] == "text":
+                    content = content_obj["text"]
+                    logger.debug(f"Extracted answer from 'completion_message.content' with type 'text': {content[:100]}...")
+            elif isinstance(content_obj, str):
+                content = content_obj
+                logger.debug(f"Extracted string answer from 'completion_message.content': {content[:100]}...")
 
+        if content:
+            logger.info(f"Generated answer of length: {len(content)}")
+            return content
+
+        logger.warning("Could not extract content from Llama API response")
         return "I couldn't interpret the results. Please try asking your question differently."
     except Exception as e:
-        print(f"Error calling Llama API for answer generation: {e}")
+        logger.error(f"Error calling Llama API for answer generation: {e}", exc_info=True)
         return "Sorry, I encountered an error while generating your answer. Please try again later."
 
 
@@ -1094,6 +1386,7 @@ def process_results_for_visualization(
     query_results: List[Dict[str, Any]]
 ) -> Dict[str, Any]:
     """Transform query results into graph visualization format with support for complex queries"""
+    logger.info(f"Processing {len(query_results)} results for visualization")
     nodes = {}
     edges = []
 
@@ -1256,20 +1549,24 @@ def process_results_for_visualization(
                 "properties": {"aggregations": True},
             }
 
+    logger.info(f"Visualization processing complete: {len(nodes)} nodes and {len(edges)} edges")
     return {"nodes": list(nodes.values()), "edges": edges}
 
 
 # Initialize database connection and schema at startup
 with app.app_context():
     # Initialize database connection and schema information at startup
+    logger.info("Initializing application...")
     db = Neo4jDatabase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
     schema_info = db.get_schema()
     db_metadata = db.get_metadata()
     query_processor = QueryProcessor(db, schema_info, db_metadata)
+    logger.info("Application initialization complete")
 
 
 @app.route("/")
 def index():
+    logger.info("Rendering index page")
     return render_template("index.html")
 
 
@@ -1277,8 +1574,10 @@ def index():
 def ask_question():
     data = request.json
     question = data.get("question", "")
+    logger.info(f"Received question: {question}")
 
     if not question:
+        logger.warning("Empty question received")
         return jsonify({"error": "Question is required"}), 400
 
     # Process the query using the QueryProcessor (handles both simple and complex queries)
@@ -1288,11 +1587,13 @@ def ask_question():
     if "enhanced_data" in result:
         result["has_enhanced_data"] = bool(result["enhanced_data"])
     
+    logger.info(f"Processed question successfully, returning response with answer length: {len(result.get('answer', ''))}")
     return jsonify(result)
 
 
 @app.route("/schema")
 def get_db_schema():
+    logger.info("Returning database schema")
     global schema_info
     return jsonify({"schema": schema_info})
 
@@ -1300,17 +1601,21 @@ def get_db_schema():
 @app.route("/expand_entity/<entity_name>")
 def expand_entity_route(entity_name):
     """Expand a specific entity and its relationships"""
+    logger.info(f"Received request to expand entity: {entity_name}")
     # Sanitize input to prevent Cypher injection
     if not re.match(r'^[a-zA-Z0-9_ -]+$', entity_name):
+        logger.warning(f"Invalid entity name received: {entity_name}")
         return jsonify({"error": "Invalid entity name"}), 400
         
     graph_data = db.expand_entity(entity_name)
+    logger.info(f"Entity expansion complete. Returning graph with {len(graph_data['nodes'])} nodes and {len(graph_data['edges'])} edges")
     return jsonify(graph_data)
 
 
 @app.route("/refresh_schema")
 def refresh_schema():
     """Refresh the database schema"""
+    logger.info("Refreshing database schema")
     global schema_info, db_metadata
     
     try:
@@ -1322,15 +1627,19 @@ def refresh_schema():
         schema_info = new_schema_info
         db_metadata = new_db_metadata
         
+        logger.info("Database schema refreshed successfully")
         return jsonify({"status": "success", "schema": schema_info})
     except Exception as e:
+        logger.error(f"Error refreshing schema: {e}", exc_info=True)
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
 if __name__ == "__main__":
     try:
+        logger.info("Starting Flask application")
         # Use reloader=False to avoid duplicate driver initializations
         app.run(debug=True, port=8080, use_reloader=False)
     finally:
         if db:
+            logger.info("Shutting down application, closing database connection")
             db.close()
