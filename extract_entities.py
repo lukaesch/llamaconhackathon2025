@@ -2,6 +2,8 @@ import concurrent.futures
 import json
 import os
 import sys
+import threading
+import time
 
 import requests
 from dotenv import load_dotenv
@@ -47,6 +49,7 @@ Allowed relationship types (use UPPER_SNAKE_CASE)
 
 ### USER
 Extract named entities, their sentiment, and their relationships from the following podcast data.
+The transcript contains beside other fields the information from_ts and to_ts, which needed to be added to each mentions.
 
 {}
 
@@ -77,6 +80,9 @@ Extract named entities, their sentiment, and their relationships from the follow
       "context": "...",
       "sentiment": 0.0,
       "sentiment_explanation": "..."
+      "from_ts": 0,
+      "to_ts": 0
+      "text": "..."
     }}
   ]
 }}
@@ -134,12 +140,18 @@ JSON_SCHEMA_PROMPT_RESULT = {
                             "context": {"type": "string"},
                             "sentiment": {"type": "number"},
                             "sentiment_explanation": {"type": "string"},
+                            "from_ts": {"type": "integer"},
+                            "to_ts": {"type": "integer"},
+                            "text": {"type": "string"},
                         },
                         "required": [
                             "entity_name",
                             "context",
                             "sentiment",
                             "sentiment_explanation",
+                            "from_ts",
+                            "to_ts",
+                            "text",
                         ],
                     },
                 },
@@ -169,10 +181,34 @@ def call_llama_api(prompt, i):
         response_format=JSON_SCHEMA_PROMPT_RESULT,
     )
     wtf(
-        "llama_response_" + str(i) + ".txt.",
-        json.loads(json.dumps(completion.to_dict())),
+        "llama_response_" + str(i) + ".json",
+        json.loads(json.dumps(completion.to_dict(), indent=2)),
     )
+    # if completion.status == "429":
+    #     time.sleep(60)  # Wait for 60 seconds before retrying
+    #     log(i, "Rate limit exceeded. Waiting for 60 seconds...")
+    #
+    #     completion = client.chat.completions.create(
+    #         model="Llama-4-Maverick-17B-128E-Instruct-FP8",
+    #         messages=[
+    #             {
+    #                 "role": "user",
+    #                 "content": prompt,
+    #             }
+    #         ],
+    #         response_format=JSON_SCHEMA_PROMPT_RESULT,
+    #     )
     return completion.to_dict()
+
+
+def pause_operations(pause_event, should_pause):
+    """Helper function to set or clear the pause event"""
+    if should_pause:
+        pause_event.set()
+        log("", "Pausing all operations...")
+    else:
+        pause_event.clear()
+        log("", "Resuming all operations...")
 
 
 def call_llama_api_raw(prompt, i):
@@ -193,9 +229,9 @@ def call_llama_api_raw(prompt, i):
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
-        log(f"Error calling Llama API: {e}")
+        log(i, f"Error calling Llama API: {e}")
         if hasattr(e, "response") and e.response:
-            log(f"Response status code: {e.response.status_code}")
+            log(i, f"Response status code: {e.response.status_code}")
             wtf(
                 "llama_response_" + str(i) + ".json",
                 f"Response text: {e.response.text}",
@@ -232,7 +268,7 @@ def extract_json_from_response(response, i):
         )
         return None
     except json.JSONDecodeError as e:
-        log(f"Error parsing JSON from response: {e}")
+        log(i, f"Error parsing JSON from response: {e}")
         wtf("response_parsing_error_" + str(i) + ".txt", f"{response}")
         return None
 
@@ -323,7 +359,10 @@ class Neo4jDatabase:
                     MERGE (m:Mention {
                         context: $context,
                         sentiment: $sentiment,
-                        sentiment_explanation: $sentiment_explanation
+                        sentiment_explanation: $sentiment_explanation,
+                        from_ts: $from_ts,
+                        to_ts: $to_ts,
+                        text: $text
                     })
                     MERGE (m)-[:REFERS_TO]->(e)
                     MERGE (m)-[:IN_EPISODE]->(ep)
@@ -333,6 +372,9 @@ class Neo4jDatabase:
                     sentiment=mention.get("sentiment", 0.0),
                     sentiment_explanation=mention.get("sentiment_explanation", ""),
                     episode_id=episode_id,
+                    from_ts=mention.get("from_ts", 0),
+                    to_ts=mention.get("to_ts", 0),
+                    text=mention.get("text", ""),
                 )
 
 
@@ -354,15 +396,19 @@ def extract_metadata(transcript):
     return metadata
 
 
-episode_list = [1, 2, 3, 4, 5, 6, 7]
+episode_list = []
 
 
 def process_episode(episode_id: str, episode_idx: int) -> None:
     """Process a single episode in parallel."""
     try:
-        log(f"\nProcessing episode {episode_id}...")
+        log(str(episode_idx), f"\nProcessing episode {episode_id}...")
         extractor = EpisodeExtractor("hackathon.db")
-        episode_data = extractor.extract_episode_data(episode_id)
+        episode_data = extractor.extract_episode_data(int(episode_id))
+        if len(episode_data.transcriptions) == 0:
+            log(str(episode_idx), "No transcriptions found for this episode.")
+            return
+
         wtf(
             "podcast_episode_" + str(episode_idx) + ".txt",
             json.dumps(episode_data.to_dict(), indent=2),
@@ -373,7 +419,7 @@ def process_episode(episode_id: str, episode_idx: int) -> None:
         wtf("prompt_" + str(episode_idx) + "_.txt", prompt, "a")
 
         # Call Llama API
-        log("Calling Llama API...")
+        log(str(episode_idx), "Calling Llama API...")
         response = None  # if lama is skipped temporarely
         response = call_llama_api(prompt, episode_idx)
 
@@ -390,30 +436,24 @@ def process_episode(episode_id: str, episode_idx: int) -> None:
                 )
 
                 # Insert data into Neo4j
-                log("Inserting data into Neo4j...")
+                log(str(episode_idx), "Inserting data into Neo4j...")
                 db = Neo4jDatabase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
                 try:
                     db.insert_data(data)
-                    log("Data successfully inserted into Neo4j!")
+                    log(str(episode_idx), "Data successfully inserted into Neo4j!")
                 except Exception as e:
-                    log(f"Error inserting data into Neo4j: {e}")
+                    log(str(episode_idx), f"Error inserting data into Neo4j: {e}")
                 finally:
                     db.close()
             else:
-                log("Failed to extract JSON data from API response")
+                log(str(episode_idx), "Failed to extract JSON data from API response")
         else:
-            log("Failed to get response from Llama API")
+            log(str(episode_idx), "Failed to get response from Llama API")
     except Exception as e:
-        log(f"Error processing episode {episode_id}: {e}")
+        log(str(episode_idx), f"Error processing episode {episode_id}: {e}")
 
 
 def main():
-    # Check if environment variables are set
-    LLAMA_API_KEY = os.environ.get("LLAMA_API_KEY")
-    NEO4J_URI = os.environ.get("NEO4J_URI")
-    NEO4J_USER = os.environ.get("NEO4J_USER")
-    NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD")
-
     if not all([LLAMA_API_KEY, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD]):
         print(
             "Error: Missing required environment variables. Please check your .env file."
@@ -421,6 +461,11 @@ def main():
         sys.exit(1)
 
     delete_directory_if_exists("logs")
+    extractor = EpisodeExtractor("hackathon.db")
+    extractor.connect()
+    episode_list = extractor.get_all_ids()
+
+    log("main", f"Episode list: {episode_list}")
 
     # Maximum number of workers (parallel processes)
     # You can adjust this based on your system's capabilities
@@ -433,7 +478,7 @@ def main():
 
         # Submit tasks to the executor
         for i, episode_id in enumerate(episode_list, start=1):
-            future = executor.submit(process_episode, episode_id, i)
+            future = executor.submit(process_episode, str(episode_id), i)
             futures.append(future)
 
         # Wait for all futures to complete (optional, as the context manager will do this)
@@ -444,7 +489,7 @@ def main():
             try:
                 future.result()  # This will raise any exceptions that occurred during execution
             except Exception as e:
-                log(f"An error occurred during parallel processing: {e}")
+                log("", f"An error occurred during parallel processing: {e}")
 
 
 def wtf(filename: str, content: str, mode: str = "a"):
@@ -457,10 +502,13 @@ def wtf(filename: str, content: str, mode: str = "a"):
             file.close()
 
 
-def log(pid, content: str):
+def log(pid: str, content: str):
     """Log content to a file with a timestamp."""
-    print(pid + ":" + content)
-    wtf("log.txt", pid + ":" + content, "a")
+    if content.startswith("Error"):
+        print(f"\033[91m{str(pid)}:{str(content)}\033[0m")
+    else:
+        print(str(pid) + ":" + str(content))
+    wtf("log.txt", str(pid) + ":" + content, "a")
 
 
 from pathlib import Path
