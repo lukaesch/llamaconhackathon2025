@@ -3,6 +3,7 @@ llama-graph-rag/target/
 .env
 hackathon.db
 myenv/
+<<<<<<< Updated upstream
 
 # Python specific
 __pycache__/
@@ -46,3 +47,6 @@ venv.bak/
 # OS specific files
 .DS_Store
 Thumbs.db
+=======
+logs/
+>>>>>>> Stashed changes

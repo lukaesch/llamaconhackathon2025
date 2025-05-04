@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import sys
@@ -17,6 +18,7 @@ LLAMA_API_URL = os.getenv("LLAMA_API_URL", "https://api.llama.com/v1/chat/comple
 NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USER = os.getenv("NEO4J_USER")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
+
 
 def create_prompt(transcript):
     """Create the full prompt for the Llama API"""
@@ -246,7 +248,9 @@ def extract_metadata(transcript):
 
     return metadata
 
-episode_list = [1,2,3,4,5,6,7]
+
+episode_list = [1, 2, 3, 4, 5, 6, 7]
+
 
 def main():
     # Check if environment variables are set
@@ -257,48 +261,80 @@ def main():
         sys.exit(1)
 
     for episode_id in episode_list:
-        print(f"Processing episode {episode_id}...")
+        log(f"Processing episode {episode_id}...")
 
         extractor = EpisodeExtractor("hackathon.db")
         episode_data = extractor.extract_episode_data(episode_id)
 
         # Extract metadata from transcript
-        podcast_id = episode_data.get("podcast").get("id")  # Default to sample ID if not found
-        episode_id = episode_data.get("item").get("id")  # Default to sample ID if not found
+        podcast_id = episode_data.podcast.id
 
         # Create prompt with transcript
-        prompt = create_prompt(episode_data)
+        prompt = create_prompt(json.dumps(episode_data.to_dict()))
+        wtf("prompt_" + str(podcast_id) + "_.txt", prompt, "a")
 
         # Call Llama API
-        print("Calling Llama API...")
+        log("Calling Llama API...")
         response = call_llama_api(prompt)
+
+        wtf("response_" + str(podcast_id) + ".txt", json.dumps(response, indent=2))
 
         if response:
             # Extract JSON data from response
             data = extract_json_from_response(response)
-    
+
             if data:
                 # Add metadata to the data
-                data.update(episode_data)
-    
+                data.update(episode_data.to_dict())
+
                 # Print extracted data
-                print("\nExtracted data:")
-                print(json.dumps(data, indent=2))
-    
+                log("\nExtracted data:")
+                wtf(
+                    "extracted_data_" + str(podcast_id) + ".txt",
+                    json.dumps(data, indent=2),
+                )
+
                 # Insert data into Neo4j
-                print("\nInserting data into Neo4j...")
+                log("\nInserting data into Neo4j...")
                 db = Neo4jDatabase(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
                 try:
                     db.insert_data(data, podcast_id, episode_id)
-                    print("Data successfully inserted into Neo4j!")
+                    log("Data successfully inserted into Neo4j!")
                 except Exception as e:
-                    print(f"Error inserting data into Neo4j: {e}")
+                    log(f"Error inserting data into Neo4j: {e}")
                 finally:
                     db.close()
             else:
-                print("Failed to extract JSON data from API response")
+                log("Failed to extract JSON data from API response")
         else:
-            print("Failed to get response from Llama API")
+            log("Failed to get response from Llama API")
+
+
+def wtf(filename: str, content: str, mode: str = "a"):
+    """Write to a file with the given filename and content."""
+    create_folder("logs")
+    with open("logs/" + filename, mode) as file:
+        file.write(content + "\n")
+
+
+def log(content: str):
+    """Log content to a file with a timestamp."""
+    print(content)
+    wtf("log.txt", content, "a")
+
+
+from pathlib import Path
+
+
+def create_folder(path: str) -> None:
+    """
+    Create a folder at the given path if it doesn't already exist.
+
+    Args:
+        path (str): The folder path to create (can be nested).
+    """
+    folder = Path(path)
+    folder.mkdir(parents=True, exist_ok=True)
 
 
 if __name__ == "__main__":
