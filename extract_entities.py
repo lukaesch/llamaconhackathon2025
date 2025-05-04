@@ -147,7 +147,15 @@ class Neo4jDatabase:
     def close(self):
         self.driver.close()
 
-    def insert_data(self, data, podcast_id, episode_id):
+    def insert_data(self, data):
+        episode = data.get("item")
+        podcast = data.get("podcast")
+        podcast_id = podcast.get("id")
+        episode_id = episode.get("id")
+        podcast_title = podcast.get("title", "ERROR: Unknown Podcast")
+        episode_title = episode.get("title", "ERROR: Unknown Episode")
+        release_date = episode.get("pub_date_timestamp")
+
         with self.driver.session() as session:
             # Create podcast node if it doesn't exist
             session.run(
@@ -156,7 +164,7 @@ class Neo4jDatabase:
                 SET p.podcast_title = $podcast_title
             """,
                 podcast_id=podcast_id,
-                podcast_title=data.get("podcast_title", "Unknown Podcast"),
+                podcast_title=podcast_title,
             )
 
             # Create episode node if it doesn't exist
@@ -170,8 +178,8 @@ class Neo4jDatabase:
                 MERGE (p)-[:HAS_EPISODE]->(e)
             """,
                 episode_id=episode_id,
-                episode_title=data.get("episode_title", "Unknown Episode"),
-                release_date=data.get("release_date", "Unknown Date"),
+                episode_title=episode_title,
+                release_date=release_date,
                 podcast_id=podcast_id,
             )
 
