@@ -221,6 +221,12 @@ class EpisodeExtractor:
         if self.conn:
             self.conn.close()
 
+    def get_all_ids(self) -> List[int]:
+        """Get all episode IDs from the database."""
+        self.cursor.execute("SELECT id FROM items ORDER BY pub_date_timestamp DESC")
+        rows = self.cursor.fetchall()
+        return [row[0] for row in rows]
+
     def get_item(self, episode_id: int) -> Item:
         """Get the item data for the specified episode ID."""
         self.cursor.execute("SELECT * FROM items WHERE id = ?", (episode_id,))
