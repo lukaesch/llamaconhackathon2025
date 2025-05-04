@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vis-data@7.1.2/dist/vis-data.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
     <style>
         @keyframes shine {
             0% {
@@ -225,37 +226,37 @@
                     <button id="toggle-physics" class="flex-1 min-w-[120px] py-3 px-4 bg-gray-100 text-gray-600 font-medium rounded-lg shadow-sm hover:bg-gray-200 hover:text-blue-500 transition-colors flex items-center justify-center">Toggle Physics</button>
                     <button id="random-insight" class="flex-1 min-w-[120px] py-3 px-4 bg-gray-100 text-gray-600 font-medium rounded-lg shadow-sm hover:bg-gray-200 hover:text-blue-500 transition-colors flex items-center justify-center animate-[pulse_2s_infinite]">Surprise Me!</button>
                 </div>
-                
-                <div class="flex flex-wrap gap-3 mt-4 p-4 bg-gray-50 rounded-lg">
-                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-                        <div class="w-4 h-4 rounded-full bg-red-500 mr-2 shadow-sm"></div>
-                        <div>Person</div>
-                    </div>
-                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-                        <div class="w-4 h-4 rounded-full bg-blue-500 mr-2 shadow-sm"></div>
-                        <div>Organization</div>
-                    </div>
-                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-                        <div class="w-4 h-4 rounded-full bg-green-500 mr-2 shadow-sm"></div>
-                        <div>Product</div>
-                    </div>
-                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-                        <div class="w-4 h-4 rounded-full bg-yellow-500 mr-2 shadow-sm"></div>
-                        <div>Episode</div>
-                    </div>
-                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-                        <div class="w-4 h-4 rounded-full bg-purple-500 mr-2 shadow-sm"></div>
-                        <div>Podcast</div>
-                    </div>
-                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-                        <div class="w-4 h-4 rounded-full bg-teal-500 mr-2 shadow-sm"></div>
-                        <div>Concept</div>
-                    </div>
-                    <div class="flex items-center mr-4 transition-transform hover:scale-105">
-                        <div class="w-4 h-4 rounded-full bg-gray-700 mr-2 shadow-sm"></div>
-                        <div>Other</div>
-                    </div>
-                </div>
+<div class="flex flex-wrap gap-3 mt-4 p-4 bg-gray-50 rounded-lg">
+    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+        <div class="w-4 h-4 rounded-full bg-[#e91e63] mr-2 shadow-sm"></div>
+        <div>Person</div>
+    </div>
+    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+        <div class="w-4 h-4 rounded-full bg-[#2196f3] mr-2 shadow-sm"></div>
+        <div>Organization</div>
+    </div>
+    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+        <div class="w-4 h-4 rounded-full bg-[#4caf50] mr-2 shadow-sm"></div>
+        <div>Product</div>
+    </div>
+    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+        <div class="w-4 h-4 rounded-full bg-[#f39c12] mr-2 shadow-sm"></div>
+        <div>Episode</div>
+    </div>
+    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+        <div class="w-4 h-4 rounded-full bg-[#9c27b0] mr-2 shadow-sm"></div>
+        <div>Podcast</div>
+    </div>
+    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+        <div class="w-4 h-4 rounded-full bg-[#009688] mr-2 shadow-sm"></div>
+        <div>Concept</div>
+    </div>
+    <div class="flex items-center mr-4 transition-transform hover:scale-105">
+        <div class="w-4 h-4 rounded-full bg-[#607d8b] mr-2 shadow-sm"></div>
+        <div>Other</div>
+    </div>
+</div>
+
             </div>
         </div>
     </div>
@@ -541,18 +542,16 @@
             // Process nodes
             if (graphData.nodes && Array.isArray(graphData.nodes)) {
                 graphData.nodes.forEach(node => {
-                    // Determine node color based on type
+                    // Determine node color based on type to match the legend
                     let color;
                     switch(node.type.toLowerCase()) {
-                        case 'person': color = '#e74c3c'; break;
-                        case 'organization': color = '#3498db'; break;
-                        case 'product': color = '#2ecc71'; break;
-                        case 'location': color = '#f1c40f'; break;
-                        case 'concept': color = '#1abc9c'; break;
-                        case 'event': color = '#9b59b6'; break;
-                        case 'episode': color = '#f39c12'; break;
-                        case 'podcast': color = '#9b59b6'; break;
-                        default: color = '#34495e'; // default gray
+                        case 'person': color = '#ef4444'; break; // Red
+                        case 'organization': color = '#3b82f6'; break; // Blue
+                        case 'product': color = '#22c55e'; break; // Green
+                        case 'episode': color = '#f59e0b'; break; // Yellow
+                        case 'podcast': color = '#9333ea'; break; // Purple
+                        case 'concept': color = '#14b8a6'; break; // Teal
+                        default: color = '#4b5563'; break; // Gray for Other
                     }
                     
                     // Add node to dataset with animation delay
@@ -573,7 +572,7 @@
                     }, Math.random() * 500); // Random delay for visual effect
                 });
             }
-            
+
             // Process edges with slight delay for visual effect
             setTimeout(() => {
                 if (graphData.edges && Array.isArray(graphData.edges)) {
@@ -604,88 +603,101 @@
         }
         
         // Ask question and update UI with improved animations
-        async function askQuestion(question = questionInput.value.trim()) {
-            if (!question) return;
-            
-            try {
-                // Update UI for loading state
-                askText.style.display = 'none';
-                askLoading.style.display = 'inline';
-                loaderElement.style.display = 'block';
-                answerDiv.innerHTML = '<div class="w-8 h-8 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto"></div>';
-                answerDiv.classList.add('loading');
-                errorMessageDiv.style.display = 'none';
-                
-                // Clear existing data
-                if (cypherQueryDiv) cypherQueryDiv.textContent = '// Loading query...';
-                if (rawResultsDiv) rawResultsDiv.textContent = '// Loading results...';
-                nodeDetailsDiv.style.display = 'none';
-                
-                // Make API request
-                const response = await fetch('/ask', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ question })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                // Update UI with responses (with typewriter effect)
-                answerDiv.classList.remove('loading');
-                answerDiv.innerHTML = '';
-                
-                // Smooth animation for showing answer
-                setTimeout(() => {
-                    // Add fancy formatting with highlights to the answer
-                    const formattedAnswer = addHighlights(data.answer || 'No answer generated.');
-                    answerDiv.innerHTML = formattedAnswer;
-                    answerDiv.style.opacity = 1;
-                    
-                    // Set other data
-                    if (cypherQueryDiv) cypherQueryDiv.textContent = data.cypher_query || '// No query available';
-                    if (rawResultsDiv) rawResultsDiv.textContent = JSON.stringify(data.results || {}, null, 2);
-                    
-                    // Show a magic notification occasionally
-                    if (Math.random() > 0.7) {
-                        setTimeout(showMagicNote, 3000);
-                    }
-                }, 300);
-                
-                // Display error if there is one
-                if (data.error) {
-                    errorMessageDiv.textContent = `Query Error: ${data.error}`;
-                    errorMessageDiv.style.display = 'block';
-                    answerDiv.classList.add('error');
-                } else {
-                    errorMessageDiv.style.display = 'none';
-                    answerDiv.classList.remove('error');
-                }
-                
-                // Visualize the graph with animation
-                if (data.graph_data) {
-                    processGraphData(data.graph_data);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                answerDiv.textContent = `Error: ${error.message}`;
-                answerDiv.classList.remove('loading');
-                answerDiv.classList.add('error');
-                errorMessageDiv.textContent = `Error: ${error.message}`;
-                errorMessageDiv.style.display = 'block';
-            } finally {
-                // Reset UI state
-                askText.style.display = 'inline';
-                askLoading.style.display = 'none';
-                loaderElement.style.display = 'none';
-            }
+       async function askQuestion(question = questionInput.value.trim()) {
+    if (!question) return;
+    
+    try {
+        // Update UI for loading state
+        askText.style.display = 'none';
+        askLoading.style.display = 'inline';
+        loaderElement.style.display = 'block';
+        answerDiv.innerHTML = '<div class="w-8 h-8 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto"></div>';
+        answerDiv.classList.add('loading');
+        errorMessageDiv.style.display = 'none';
+        
+        // Clear existing data
+        if (cypherQueryDiv) cypherQueryDiv.textContent = '// Loading query...';
+        if (rawResultsDiv) rawResultsDiv.textContent = '// Loading results...';
+        nodeDetailsDiv.style.display = 'none';
+        
+        // Make API request
+        const response = await fetch('/ask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ question })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error ${response.status}`);
         }
         
+        const data = await response.json();
+        
+        // Update UI with responses
+        answerDiv.classList.remove('loading');
+        answerDiv.innerHTML = '';
+        
+        // Smooth animation for showing answer
+        setTimeout(() => {
+            // Initialize markdown-it
+            const md = window.markdownit();
+            
+            // Check if the answer appears to contain markdown
+            const answer = data.answer || 'No answer generated.';
+            
+            // If answer contains markdown indicators, render it as markdown
+            if (answer.includes('**') || answer.includes('##') || 
+                answer.includes('```') || answer.includes('*') || 
+                answer.includes('[') || answer.includes('|')) {
+                answerDiv.innerHTML = md.render(answer);
+            } else {
+                // Otherwise use the highlight method for plain text
+                const formattedAnswer = addHighlights(answer);
+                answerDiv.innerHTML = formattedAnswer;
+            }
+            
+            answerDiv.style.opacity = 1;
+            
+            // Set other data
+            if (cypherQueryDiv) cypherQueryDiv.textContent = data.cypher_query || '// No query available';
+            if (rawResultsDiv) rawResultsDiv.textContent = JSON.stringify(data.results || {}, null, 2);
+            
+            // Show a magic notification occasionally
+            if (Math.random() > 0.7) {
+                setTimeout(showMagicNote, 3000);
+            }
+        }, 300);
+        
+        // Display error if there is one
+        if (data.error) {
+            errorMessageDiv.textContent = `Query Error: ${data.error}`;
+            errorMessageDiv.style.display = 'block';
+            answerDiv.classList.add('error');
+        } else {
+            errorMessageDiv.style.display = 'none';
+            answerDiv.classList.remove('error');
+        }
+        
+        // Visualize the graph with animation
+        if (data.graph_data) {
+            processGraphData(data.graph_data);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        answerDiv.textContent = `Error: ${error.message}`;
+        answerDiv.classList.remove('loading');
+        answerDiv.classList.add('error');
+        errorMessageDiv.textContent = `Error: ${error.message}`;
+        errorMessageDiv.style.display = 'block';
+    } finally {
+        // Reset UI state
+        askText.style.display = 'inline';
+        askLoading.style.display = 'none';
+        loaderElement.style.display = 'none';
+    }
+} 
         // Add highlights to the answer text
         function addHighlights(text) {
             // Find entities to highlight (words starting with uppercase letters)
