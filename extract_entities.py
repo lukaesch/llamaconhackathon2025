@@ -1,4 +1,3 @@
-import datetime
 import json
 import os
 import sys
@@ -268,24 +267,35 @@ def main():
         )
         sys.exit(1)
 
-    for episode_id in episode_list:
+    delete_directory_if_exists("logs")
+    for i, episode_id in enumerate(episode_list, start=1):
         log(f"Processing episode {episode_id}...")
 
         extractor = EpisodeExtractor("hackathon.db")
-        episode_data = extractor.extract_episode_data(episode_id)
+        episode_data = extractor.extract_episode_data(episode_id + 10)
 
         # Extract metadata from transcript
         podcast_id = episode_data.podcast.id
 
+        wtf(
+            "podcast_episode_" + str(i) + ".txt",
+            json.dumps(episode_data.to_dict(), indent=2),
+        )
+
         # Create prompt with transcript
         prompt = create_prompt(json.dumps(episode_data.to_dict()))
-        wtf("prompt_" + str(podcast_id) + "_.txt", prompt, "a")
+        wtf("prompt_" + str(i) + "_.txt", prompt, "a")
 
         # Call Llama API
         log("Calling Llama API...")
+        response = None  # if lama is skipped temporarely
         response = call_llama_api(prompt)
 
-        wtf("response_" + str(podcast_id) + ".txt", json.dumps(response, indent=2))
+        wtf(
+            "response_" + str(i) + ".txt",
+            json.dumps(response, indent=2),
+            "a",
+        )
 
         if response:
             # Extract JSON data from response
@@ -298,8 +308,9 @@ def main():
                 # Print extracted data
                 log("\nExtracted data:")
                 wtf(
-                    "extracted_data_" + str(podcast_id) + ".txt",
+                    "extracted_data_" + str(i) + ".txt",
                     json.dumps(data, indent=2),
+                    "w",
                 )
 
                 # Insert data into Neo4j
@@ -320,9 +331,11 @@ def main():
 
 def wtf(filename: str, content: str, mode: str = "a"):
     """Write to a file with the given filename and content."""
+    print(f"Writing to file ${filename}")
     create_folder("logs")
-    with open("logs/" + filename, mode) as file:
+    with open("./logs/" + filename, mode) as file:
         file.write(content + "\n")
+        file.close()
 
 
 def log(content: str):
@@ -343,6 +356,17 @@ def create_folder(path: str) -> None:
     """
     folder = Path(path)
     folder.mkdir(parents=True, exist_ok=True)
+
+
+import shutil
+
+
+def delete_directory_if_exists(dir_path):
+    if os.path.exists(dir_path) and os.path.isdir(dir_path):
+        shutil.rmtree(dir_path)
+        print(f"Deleted directory: {dir_path}")
+    else:
+        print(f"Directory does not exist: {dir_path}")
 
 
 if __name__ == "__main__":
