@@ -70,7 +70,8 @@ The adaptive querying system:
 
 - Python 3.9+
 - Neo4j database
-- Llama API access
+- Llama API access ([https://llama.developer.meta.com/](https://llama.developer.meta.com/))
+- Audioscrape API key for fetching podcast transcriptions and metadata ([www.audioscrape.com](https://www.audioscrape.com))
 
 ### Environment Variables
 
